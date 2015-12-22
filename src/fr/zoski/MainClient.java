@@ -2,18 +2,18 @@ package fr.zoski;
 
 import java.io.IOException;
 
-public class Main {
+/**
+ * Created by gael on 22/12/15.
+ */
+public class MainClient {
 
     public static void main(String[] args) {
-	    System.out.println("prout");
 
-        EchoServer server = new EchoServer();
+        EchoClient client = new EchoClient();
         try {
-            server.start();
+            client.start();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 }

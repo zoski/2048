@@ -1,7 +1,6 @@
 package fr.zoski;
 
 import java.io.IOException;
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -12,7 +11,6 @@ import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.util.Iterator;
-import java.util.StringTokenizer;
 
 /**
  * Created by gael on 18/12/15.
@@ -55,8 +53,11 @@ public class EchoServer {
                 // extraction des clef issues des événements correspondants aux canaux enregistrés par le sélecteur
                 SelectionKey key = it.next();
 
-                if(!key.isValid())
+                if(!key.isValid()) {
+                    System.out.println("Key is NOT valid...");
                     continue;
+                }
+
 
                 if(key.isAcceptable()) {
                     System.out.println("Key is acceptable...");
@@ -74,6 +75,9 @@ public class EchoServer {
                     this.doEcho("writable", clientChannel);
                     continue;
                 }
+
+
+
             }
         }
     }
