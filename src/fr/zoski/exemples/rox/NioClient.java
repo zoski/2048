@@ -85,7 +85,7 @@ public class NioClient implements Runnable {
 				Iterator selectedKeys = this.selector.selectedKeys().iterator();
 				while (selectedKeys.hasNext()) {
 					SelectionKey key = (SelectionKey) selectedKeys.next();
-					selectedKeys.remove();
+//					selectedKeys.remove();
 
 					if (!key.isValid()) {
 						continue;
@@ -124,13 +124,13 @@ public class NioClient implements Runnable {
 			return;
 		}
 
-		if (numRead == -1) {
-			// Remote entity shut the socket down cleanly. Do the
-			// same from our end and cancel the channel.
-			key.channel().close();
-			key.cancel();
-			return;
-		}
+//		if (numRead == -1) {
+//			// Remote entity shut the socket down cleanly. Do the
+//			// same from our end and cancel the channel.
+////			key.channel().close();
+////			key.cancel();
+//			return;
+//		}
 
 		// Handle the response
 		this.handleResponse(socketChannel, this.readBuffer.array(), numRead);
@@ -148,8 +148,8 @@ public class NioClient implements Runnable {
 		// And pass the response to it
 		if (handler.handleResponse(rspData)) {
 			// The handler has seen enough, close the connection
-			socketChannel.close();
-			socketChannel.keyFor(this.selector).cancel();
+//			socketChannel.close();
+//			socketChannel.keyFor(this.selector).cancel();
 		}
 	}
 
@@ -223,12 +223,12 @@ public class NioClient implements Runnable {
 
 	public static void main(String[] args) {
 		try {
-			NioClient client = new NioClient(InetAddress.getByName("localhost"), 8080);
+			NioClient client = new NioClient(InetAddress.getByName("alberola.me"), 8080);
 			Thread t = new Thread(client);
 			t.setDaemon(true);
 			t.start();
 			RspHandler handler = new RspHandler();
-			client.send("Yo Bitches \n".getBytes(), handler);
+			client.send("salut à toi".getBytes(), handler);	//send to server
 			handler.waitForResponse();
 		} catch (Exception e) {
 			e.printStackTrace();
