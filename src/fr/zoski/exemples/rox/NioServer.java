@@ -114,7 +114,7 @@ public class NioServer implements Runnable {
 		SocketChannel socketChannel = serverSocketChannel.accept();
 		Socket socket = socketChannel.socket();
 		socketChannel.configureBlocking(false);
-
+		System.out.println("Connection accepted with selector : " + this.selector.toString());
 		// Register the new SocketChannel with our Selector, indicating
 		// we'd like to be notified when there's data waiting to be read
 		socketChannel.register(this.selector, SelectionKey.OP_READ);

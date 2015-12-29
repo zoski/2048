@@ -1,6 +1,8 @@
 package fr.zoski.exemples.rox;
 
+import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.nio.charset.Charset;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,6 +12,12 @@ public class EchoWorker implements Runnable {
 	public void processData(NioServer server, SocketChannel socket, byte[] data, int count) {
 		byte[] dataCopy = new byte[count];
 		System.arraycopy(data, 0, dataCopy, 0, count);
+
+        // Wrapping the byte[] whithin a ByteBuffer
+        ByteBuffer bb = ByteBuffer.wrap(dataCopy);
+        // Decoding and displaying the received data
+		System.out.println("Data received : " + Charset.defaultCharset().decode(bb));
+
 		synchronized(queue) {
 			queue.add(new ServerDataEvent(server, socket, dataCopy));
 			queue.notify();
