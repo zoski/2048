@@ -26,18 +26,26 @@ public class EchoClient {
         this.remote = new InetSocketAddress(DEFAULT_SERVER, DEFAULT_PORT);
     }
 
-    public void setup() throws IOException {
+    public void setup() throws IOException, InterruptedException {
         this.clientSocketChannel = SocketChannel.open();
         this.clientSocketChannel.configureBlocking(false);
 
         this.clientSocketChannel.connect(remote);
 
-        while (!clientSocketChannel.finishConnect()) {
-
+        int i=0;
+        while(!this.clientSocketChannel.isConnected()) {
+            i++;
+           if(i==10000) {
+               System.out.println("Not yet connected...");
+               i=0;
+           }
         }
+
+//        while (!this.clientSocketChannel.finishConnect()) {
+  //      }
     }
 
-    public void start() throws IOException {
+    public void start() throws IOException, InterruptedException {
         System.out.println("Setting up the client...");
         this.setup();
 

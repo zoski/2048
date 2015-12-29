@@ -14,6 +14,8 @@ public class MainClient {
             client.start();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }
