@@ -154,21 +154,37 @@ public class NioClient implements Runnable {
     private void handleResponse(SocketChannel socketChannel, byte[] data, int numRead) throws IOException {
         // Make a correctly sized copy of the data before handing it
         // to the client
-        byte[] rspData = new byte[numRead];
-        System.arraycopy(data, 0, rspData, 0, numRead);
+        byte[] dataCopy = new byte[numRead];
+        System.arraycopy(data, 0, dataCopy, 0, numRead);
 
         // Look up the handler for this channel
-        RspHandler handler = (RspHandler) this.rspHandlers.get(socketChannel);
+//        RspHandler handler = (RspHandler) this.rspHandlers.get(socketChannel);
+        // Wrapping the byte[] whithin a ByteBuffer
+        ByteBuffer bb = ByteBuffer.wrap(dataCopy);
 
+        short id = bb.getShort();
+        System.out.println("Id read : " + id);
 
-        processData(handler.getRsp(),numRead);
+        // Chosing the good action depending the id
+        if(id == 3){
+            int size = bb.getInt();
+            short[] grid = new short[size];
+            for(int k=0;k<(int)size;k++){
+                grid[k] = bb.getShort();
+                System.out.println(grid[k]);
+            }
+            System.out.println("Index 3 wanted): " + id + " ; size : " + size + " grid de short: "+ grid.toString());
+
+        }
+
+//        processData(handler.getRsp(),numRead);
 
         // And pass the response to it
-        if (handler.handleResponse(rspData)) {
-            // The handler has seen enough, close the connection
-//			socketChannel.close();
-//			socketChannel.keyFor(this.selector).cancel();
-        }
+//        if (handler.handleResponse(rspData)) {
+//            // The handler has seen enough, close the connection
+////			socketChannel.close();
+////			socketChannel.keyFor(this.selector).cancel();
+//        }
     }
 
     private void write(SelectionKey key) throws IOException {
@@ -239,28 +255,29 @@ public class NioClient implements Runnable {
         return SelectorProvider.provider().openSelector();
     }
 
-    static public void processData(byte[] data, int count) {
-        System.out.println("count from processdata: "+count);
-        byte[] dataCopy = new byte[count];
-        System.arraycopy(data, 0, dataCopy, 0, count);
-
-        // Wrapping the byte[] whithin a ByteBuffer
-        ByteBuffer bb = ByteBuffer.wrap(dataCopy);
-
-        short id = bb.getShort();
-        System.out.println("Id read : " + id);
-
-        // Chosing the good action depending the id
-        if(id == 3){
-            short size = bb.getShort();
-            short[] grid = new short[size];
-            for(int k=0;k<(int)size;k++){
-                grid[k] = bb.getShort();
-            }
-            System.out.println("Index 3 wanted): " + id + " ; size : " + size + " grid de short: "+ grid.toString());
-        }
-
-    }
+//    static public void processData(byte[] data, int count) {
+//        System.out.println("count from processdata: "+count);
+//        byte[] dataCopy = new byte[count];
+//        System.out.println("datacopy: "+dataCopy.toString());
+//        System.arraycopy(data, 0, dataCopy, 0, count);
+//
+//        // Wrapping the byte[] whithin a ByteBuffer
+//        ByteBuffer bb = ByteBuffer.wrap(dataCopy);
+//
+//        short id = bb.getShort();
+//        System.out.println("Id read : " + id);
+//
+//        // Chosing the good action depending the id
+//        if(id == 3){
+//            short size = bb.getShort();
+//            short[] grid = new short[size];
+//            for(int k=0;k<(int)size;k++){
+//                grid[k] = bb.getShort();
+//            }
+//            System.out.println("Index 3 wanted): " + id + " ; size : " + size + " grid de short: "+ grid.toString());
+//        }
+//
+//    }
 
     //method start with id=0 (short) and the int is for the size of the grid
     static private byte[] start(int gridSize){
