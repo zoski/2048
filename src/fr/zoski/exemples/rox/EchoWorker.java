@@ -24,10 +24,6 @@ public class EchoWorker implements Runnable {
             case 0: // START OR RESTART
                 int size = bb.getInt();
                 System.out.println("Asked for a new Grid size : " + size);
-
-                /*  */
-
-
                 break;
 
             case 1: // DIRECTION INPUT
@@ -90,7 +86,11 @@ public class EchoWorker implements Runnable {
             }
 
             // Return to sender
-            dataEvent.server.send(dataEvent.socket, dataEvent.data);
+            dataEvent.server.send(dataEvent.socket, dataEvent.server.grid(10));
+
+            //dataEvent.server.send(dataEvent.socket, dataEvent.data);
+
+
         }
     }
 }

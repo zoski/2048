@@ -42,13 +42,18 @@ public class NioServer implements Runnable {
     }
 
     public static void main(String[] args) {
-        short i = 18;
+
+
         try {
             EchoWorker worker = new EchoWorker();
             new Thread(worker).start();
             new Thread(new NioServer(null, 8080, worker)).start();
             System.out.println("Server started on port 8080 ");
-            //System.out.println("Size of short : " + Byte);
+
+
+            System.out.println("  ");
+
+
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -155,6 +160,7 @@ public class NioServer implements Runnable {
         if (numRead == -1) {
             // Remote entity shut the socket down cleanly. Do the
             // same from our end and cancel the channel.
+            System.out.println("Dans le - 1");
             key.channel().close();
             key.cancel();
             return;
@@ -207,5 +213,15 @@ public class NioServer implements Runnable {
         serverChannel.register(socketSelector, SelectionKey.OP_ACCEPT);
 
         return socketSelector;
+    }
+
+    public byte[] grid(int size) {
+        System.out.println("Grid time...");
+        ByteBuffer bb = ByteBuffer.allocate(6 + 2 * size);
+        bb.putShort((short) 3);
+        for (int i = 0; i < size; i++) {
+            bb.putShort((short) i);
+        }
+        return bb.array();
     }
 }
