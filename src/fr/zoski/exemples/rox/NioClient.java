@@ -43,7 +43,8 @@ public class NioClient implements Runnable {
             t.setDaemon(true);
             t.start();
             RspHandler handler = new RspHandler();
-            client.send("salut à toi".getBytes(), handler);    //send to server
+//            client.send(start(666), handler);    //send to server
+            client.send(move(((short) 2)), handler);
             handler.waitForResponse();
         } catch (Exception e) {
             e.printStackTrace();
@@ -233,5 +234,24 @@ public class NioClient implements Runnable {
     private Selector initSelector() throws IOException {
         // Create a new selector
         return SelectorProvider.provider().openSelector();
+    }
+
+    //method start with id=0 (short) and the int is for the size of the grid
+    static private byte[] start(int gridSize){
+        ByteBuffer buffer = ByteBuffer.allocate(6);
+        buffer.putShort(((short) 0));
+//        System.out.println(buffer.toString());
+        buffer.putInt(gridSize);
+//        System.out.println(buffer.toString());
+        return buffer.array();
+    }
+
+    static private byte[] move(short direction){
+        ByteBuffer buffer = ByteBuffer.allocate(4);
+        buffer.putShort(((short) 1));
+        System.out.println(buffer.toString());
+        buffer.putShort(direction);
+        System.out.println(buffer.toString());
+        return buffer.array();
     }
 }
