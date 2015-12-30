@@ -19,4 +19,8 @@ public class RspHandler {
 
         System.out.println(new String(this.rsp));
     }
+
+    public byte[] getRsp(){
+        return rsp;
+    }
 }

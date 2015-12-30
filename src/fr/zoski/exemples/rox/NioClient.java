@@ -160,6 +160,9 @@ public class NioClient implements Runnable {
         // Look up the handler for this channel
         RspHandler handler = (RspHandler) this.rspHandlers.get(socketChannel);
 
+
+        processData(handler.getRsp(),numRead);
+
         // And pass the response to it
         if (handler.handleResponse(rspData)) {
             // The handler has seen enough, close the connection
@@ -236,6 +239,29 @@ public class NioClient implements Runnable {
         return SelectorProvider.provider().openSelector();
     }
 
+    static public void processData(byte[] data, int count) {
+        System.out.println("count from processdata: "+count);
+        byte[] dataCopy = new byte[count];
+        System.arraycopy(data, 0, dataCopy, 0, count);
+
+        // Wrapping the byte[] whithin a ByteBuffer
+        ByteBuffer bb = ByteBuffer.wrap(dataCopy);
+
+        short id = bb.getShort();
+        System.out.println("Id read : " + id);
+
+        // Chosing the good action depending the id
+        if(id == 3){
+            short size = bb.getShort();
+            short[] grid = new short[size];
+            for(int k=0;k<(int)size;k++){
+                grid[k] = bb.getShort();
+            }
+            System.out.println("Index 3 wanted): " + id + " ; size : " + size + " grid de short: "+ grid.toString());
+        }
+
+    }
+
     //method start with id=0 (short) and the int is for the size of the grid
     static private byte[] start(int gridSize){
         ByteBuffer buffer = ByteBuffer.allocate(6);
@@ -249,9 +275,9 @@ public class NioClient implements Runnable {
     static private byte[] move(short direction){
         ByteBuffer buffer = ByteBuffer.allocate(4);
         buffer.putShort(((short) 1));
-        System.out.println(buffer.toString());
+//        System.out.println(buffer.toString());
         buffer.putShort(direction);
-        System.out.println(buffer.toString());
+//        System.out.println(buffer.toString());
         return buffer.array();
     }
 }
