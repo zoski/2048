@@ -218,7 +218,11 @@ public class NioServer implements Runnable {
     public byte[] grid(int size) {
         System.out.println("Grid time...");
         ByteBuffer bb = ByteBuffer.allocate(6 + 2 * size);
+
+        // id
         bb.putShort((short) 3);
+        // size
+        bb.putInt(size);
         for (int i = 0; i < size; i++) {
             bb.putShort((short) i);
         }
