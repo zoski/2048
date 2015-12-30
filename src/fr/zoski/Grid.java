@@ -1,9 +1,11 @@
 package fr.zoski;
 
+import java.io.Serializable;
+
 /**
  * Created by gael on 30/12/15.
  */
-public class Grid {
+public class Grid implements Serializable {
     /*
     Just an object for test purpose
      */

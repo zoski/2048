@@ -1,9 +1,11 @@
 package fr.zoski;
 
+import java.io.Serializable;
+
 /**
  * Created by gael on 30/12/15.
  */
-public class Data {
+public class Data implements Serializable {
     /*
     Data container
     to be transformed as a byte[] and send throw the network
