@@ -3,7 +3,6 @@ package fr.zoski.exemples.rox;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-import java.nio.charset.Charset;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,18 +17,22 @@ public class EchoWorker implements Runnable {
         ByteBuffer bb = ByteBuffer.wrap(dataCopy);
 
         short id = bb.getShort();
-        System.out.println("Short read : " + id);
+        System.out.println("Id read : " + id);
 
         // Chosing the good action depending the id
         switch (id) {
             case 0: // START OR RESTART
                 int size = bb.getInt();
                 System.out.println("Asked for a new Grid size : " + size);
+
+                /*  */
+
+
                 break;
 
             case 1: // DIRECTION INPUT
                 short dir = bb.getShort();
-
+                System.out.println("Direction received : " + dir);
                 switch (dir) {
                     case 1:
                         System.out.println("TOP");
@@ -50,12 +53,15 @@ public class EchoWorker implements Runnable {
                     default:
                         System.out.println("Wrong direction...\n" +
                                 "Something when wrong");
+                        break;
 
                 }
+                break;
 
             default:
                 System.out.println("Wrong action...\n" +
                         "Something when wrong");
+                break;
 
         }
 

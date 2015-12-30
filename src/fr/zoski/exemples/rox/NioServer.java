@@ -42,10 +42,14 @@ public class NioServer implements Runnable {
     }
 
     public static void main(String[] args) {
+        short i = 18;
         try {
             EchoWorker worker = new EchoWorker();
             new Thread(worker).start();
             new Thread(new NioServer(null, 8080, worker)).start();
+            System.out.println("Server started on port 8080 ");
+            //System.out.println("Size of short : " + Byte);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
