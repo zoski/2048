@@ -1,4 +1,4 @@
-package fr.zoski.exemples.rox;
+package fr.zoski.rox;
 
 public class RspHandler {
     private byte[] rsp = null;

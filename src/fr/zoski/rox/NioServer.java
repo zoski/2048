@@ -1,4 +1,4 @@
-package fr.zoski.exemples.rox;
+package fr.zoski.rox;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -42,7 +42,6 @@ public class NioServer implements Runnable {
     }
 
     public static void main(String[] args) {
-
 
         try {
             EchoWorker worker = new EchoWorker();
@@ -133,7 +132,9 @@ public class NioServer implements Runnable {
         SocketChannel socketChannel = serverSocketChannel.accept();
         Socket socket = socketChannel.socket();
         socketChannel.configureBlocking(false);
-        System.out.println("Connection accepted with selector : " + this.selector.toString());
+
+        System.out.println("Connection accepted with socketChannel : " + socket.toString());
+
         // Register the new SocketChannel with our Selector, indicating
         // we'd like to be notified when there's data waiting to be read
         socketChannel.register(this.selector, SelectionKey.OP_READ);
@@ -160,7 +161,7 @@ public class NioServer implements Runnable {
         if (numRead == -1) {
             // Remote entity shut the socket down cleanly. Do the
             // same from our end and cancel the channel.
-            System.out.println("Dans le - 1");
+            System.out.println("Client shuted down the socket" + socketChannel.toString() + "... bye bye");
             key.channel().close();
             key.cancel();
             return;

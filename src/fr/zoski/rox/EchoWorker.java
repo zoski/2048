@@ -1,4 +1,4 @@
-package fr.zoski.exemples.rox;
+package fr.zoski.rox;
 
 
 import java.nio.ByteBuffer;
@@ -50,7 +50,6 @@ public class EchoWorker implements Runnable {
                         System.out.println("Wrong direction...\n" +
                                 "Something when wrong");
                         break;
-
                 }
                 break;
 

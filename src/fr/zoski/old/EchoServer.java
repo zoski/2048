@@ -1,4 +1,4 @@
-package fr.zoski;
+package fr.zoski.old;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -108,5 +108,6 @@ public class EchoServer {
         ByteBuffer buffer = ByteBuffer.wrap((msg.getBytes()));
         int nBytes = socketChannel.write(buffer);
     }
+
 
 }

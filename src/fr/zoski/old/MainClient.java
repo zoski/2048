@@ -1,4 +1,6 @@
-package fr.zoski;
+package fr.zoski.old;
+
+import fr.zoski.old.EchoClient;
 
 import java.io.IOException;
 

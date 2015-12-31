@@ -78,9 +78,9 @@ public class Game2048Frame {
     private void setKeyBindings() {
         InputMap inputMap =
                 gridPanel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
-        inputMap.put(KeyStroke.getKeyStroke("W"), "up arrow");
+        inputMap.put(KeyStroke.getKeyStroke("Z"), "up arrow");
         inputMap.put(KeyStroke.getKeyStroke("S"), "down arrow");
-        inputMap.put(KeyStroke.getKeyStroke("A"), "left arrow");
+        inputMap.put(KeyStroke.getKeyStroke("Q"), "left arrow");
         inputMap.put(KeyStroke.getKeyStroke("D"), "right arrow");
 
         inputMap.put(KeyStroke.getKeyStroke("UP"), "up arrow");

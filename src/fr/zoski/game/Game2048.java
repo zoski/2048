@@ -17,7 +17,7 @@ public class Game2048 implements Runnable {
 
     @Override
     public void run() {
-        new Game2048Frame(new Game2048Model());
+        new Game2048Frame(new Game2048Model(4));
     }
 
 }

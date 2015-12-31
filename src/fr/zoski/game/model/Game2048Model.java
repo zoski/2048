@@ -11,21 +11,18 @@ public class Game2048Model {
     private static final boolean DEBUG = false;
 
     private static final int FRAME_THICKNESS = 16;
-    private static final int GRID_WIDTH = 4;
 
     private boolean arrowActive;
 
-    private int highScore;
-    private int highCell;
-    private int currentScore;
-    private int currentCell;
+    private int highScore, highCell, currentScore, currentCell, grid_width = 4;
 
     private Cell[][] grid;
 
     private Random random;
 
-    public Game2048Model() {
-        this.grid = new Cell[GRID_WIDTH][GRID_WIDTH];
+    public Game2048Model(int size) {
+        grid_width = size;
+        this.grid = new Cell[grid_width][grid_width];
         this.random = new Random();
         this.highScore = 0;
         this.highCell = 0;
@@ -37,9 +34,9 @@ public class Game2048Model {
 
     public void initializeGrid() {
         int xx = FRAME_THICKNESS;
-        for (int x = 0; x < GRID_WIDTH; x++) {
+        for (int x = 0; x < grid_width; x++) {
             int yy = FRAME_THICKNESS;
-            for (int y = 0; y < GRID_WIDTH; y++) {
+            for (int y = 0; y < grid_width; y++) {
                 Cell cell = new Cell(0);
                 cell.setCellLocation(xx, yy);
                 grid[x][y] = cell;
@@ -63,8 +60,8 @@ public class Game2048Model {
     }
 
     private boolean isGridFull() {
-        for (int x = 0; x < GRID_WIDTH; x++) {
-            for (int y = 0; y < GRID_WIDTH; y++) {
+        for (int x = 0; x < grid_width; x++) {
+            for (int y = 0; y < grid_width; y++) {
                 if (grid[x][y].isZeroValue()) {
                     return false;
                 }
@@ -74,8 +71,8 @@ public class Game2048Model {
     }
 
     private boolean isMovePossible() {
-        for (int x = 0; x < GRID_WIDTH; x++) {
-            for (int y = 0; y < (GRID_WIDTH - 1); y++) {
+        for (int x = 0; x < grid_width; x++) {
+            for (int y = 0; y < (grid_width - 1); y++) {
                 int yy = y + 1;
                 if (grid[x][y].getValue() == grid[x][yy].getValue()) {
                     return true;
@@ -83,8 +80,8 @@ public class Game2048Model {
             }
         }
 
-        for (int y = 0; y < GRID_WIDTH; y++) {
-            for (int x = 0; x < (GRID_WIDTH - 1); x++) {
+        for (int y = 0; y < grid_width; y++) {
+            for (int x = 0; x < (grid_width - 1); x++) {
                 int xx = x + 1;
                 if (grid[x][y].getValue() == grid[xx][y].getValue()) {
                     return true;
@@ -100,8 +97,8 @@ public class Game2048Model {
 
         boolean locationFound = false;
         while (!locationFound) {
-            int x = random.nextInt(GRID_WIDTH);
-            int y = random.nextInt(GRID_WIDTH);
+            int x = random.nextInt(grid_width);
+            int y = random.nextInt(grid_width);
             if (grid[x][y].isZeroValue()) {
                 grid[x][y].setValue(value);
                 locationFound = true;
@@ -130,8 +127,8 @@ public class Game2048Model {
 
         if (moveCellsUpLoop()) dirty = true;
 
-        for (int x = 0; x < GRID_WIDTH; x++) {
-            for (int y = 0; y < (GRID_WIDTH - 1); y++) {
+        for (int x = 0; x < grid_width; x++) {
+            for (int y = 0; y < (grid_width - 1); y++) {
                 int yy = y + 1;
                 dirty = combineCells(x, yy, x, y, dirty);
             }
@@ -145,11 +142,11 @@ public class Game2048Model {
     private boolean moveCellsUpLoop() {
         boolean dirty = false;
 
-        for (int x = 0; x < GRID_WIDTH; x++) {
+        for (int x = 0; x < grid_width; x++) {
             boolean columnDirty = false;
             do {
                 columnDirty = false;
-                for (int y = 0; y < (GRID_WIDTH - 1); y++) {
+                for (int y = 0; y < (grid_width - 1); y++) {
                     int yy = y + 1;
                     boolean cellDirty = moveCell(x, yy, x, y);
                     if (cellDirty) {
@@ -168,8 +165,8 @@ public class Game2048Model {
 
         if (moveCellsDownLoop()) dirty = true;
 
-        for (int x = 0; x < GRID_WIDTH; x++) {
-            for (int y = GRID_WIDTH - 1; y > 0; y--) {
+        for (int x = 0; x < grid_width; x++) {
+            for (int y = grid_width - 1; y > 0; y--) {
                 int yy = y - 1;
                 dirty = combineCells(x, yy, x, y, dirty);
             }
@@ -183,11 +180,11 @@ public class Game2048Model {
     private boolean moveCellsDownLoop() {
         boolean dirty = false;
 
-        for (int x = 0; x < GRID_WIDTH; x++) {
+        for (int x = 0; x < grid_width; x++) {
             boolean columnDirty = false;
             do {
                 columnDirty = false;
-                for (int y = GRID_WIDTH - 1; y > 0; y--) {
+                for (int y = grid_width - 1; y > 0; y--) {
                     int yy = y - 1;
                     boolean cellDirty = moveCell(x, yy, x, y);
                     if (cellDirty) {
@@ -206,8 +203,8 @@ public class Game2048Model {
 
         if (moveCellsLeftLoop()) dirty = true;
 
-        for (int y = 0; y < GRID_WIDTH; y++) {
-            for (int x = 0; x < (GRID_WIDTH - 1); x++) {
+        for (int y = 0; y < grid_width; y++) {
+            for (int x = 0; x < (grid_width - 1); x++) {
                 int xx = x + 1;
                 dirty = combineCells(xx, y, x, y, dirty);
             }
@@ -221,11 +218,11 @@ public class Game2048Model {
     private boolean moveCellsLeftLoop() {
         boolean dirty = false;
 
-        for (int y = 0; y < GRID_WIDTH; y++) {
+        for (int y = 0; y < grid_width; y++) {
             boolean rowDirty = false;
             do {
                 rowDirty = false;
-                for (int x = 0; x < (GRID_WIDTH - 1); x++) {
+                for (int x = 0; x < (grid_width - 1); x++) {
                     int xx = x + 1;
                     boolean cellDirty = moveCell(xx, y, x, y);
                     if (cellDirty) {
@@ -244,8 +241,8 @@ public class Game2048Model {
 
         if (moveCellsRightLoop()) dirty = true;
 
-        for (int y = 0; y < GRID_WIDTH; y++) {
-            for (int x = (GRID_WIDTH - 1); x > 0; x--) {
+        for (int y = 0; y < grid_width; y++) {
+            for (int x = (grid_width - 1); x > 0; x--) {
                 int xx = x - 1;
                 dirty = combineCells(xx, y, x, y, dirty);
             }
@@ -259,11 +256,11 @@ public class Game2048Model {
     private boolean moveCellsRightLoop() {
         boolean dirty = false;
 
-        for (int y = 0; y < GRID_WIDTH; y++) {
+        for (int y = 0; y < grid_width; y++) {
             boolean rowDirty = false;
             do {
                 rowDirty = false;
-                for (int x = (GRID_WIDTH - 1); x > 0; x--) {
+                for (int x = (grid_width - 1); x > 0; x--) {
                     int xx = x - 1;
                     boolean cellDirty = moveCell(xx, y, x, y);
                     if (cellDirty) {
@@ -365,7 +362,7 @@ public class Game2048Model {
     }
 
     public Dimension getPreferredSize() {
-        int width = GRID_WIDTH * Cell.getCellWidth() +
+        int width = grid_width * Cell.getCellWidth() +
                 FRAME_THICKNESS * 5;
         return new Dimension(width, width);
     }
@@ -375,8 +372,8 @@ public class Game2048Model {
         Dimension d = getPreferredSize();
         g.fillRect(0, 0, d.width, d.height);
 
-        for (int x = 0; x < GRID_WIDTH; x++) {
-            for (int y = 0; y < GRID_WIDTH; y++) {
+        for (int x = 0; x < grid_width; x++) {
+            for (int y = 0; y < grid_width; y++) {
                 grid[x][y].draw(g);
             }
         }

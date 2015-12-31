@@ -1,4 +1,4 @@
-package fr.zoski.exemples.rox;
+package fr.zoski.rox;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -49,6 +49,25 @@ public class NioClient implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    //method start with id=0 (short) and the int is for the size of the grid
+    static private byte[] start(int gridSize) {
+        ByteBuffer buffer = ByteBuffer.allocate(6);
+        buffer.putShort(((short) 0));
+//        System.out.println(buffer.toString());
+        buffer.putInt(gridSize);
+//        System.out.println(buffer.toString());
+        return buffer.array();
+    }
+
+    static private byte[] move(short direction) {
+        ByteBuffer buffer = ByteBuffer.allocate(4);
+        buffer.putShort(((short) 1));
+//        System.out.println(buffer.toString());
+        buffer.putShort(direction);
+//        System.out.println(buffer.toString());
+        return buffer.array();
     }
 
     public void send(byte[] data, RspHandler handler) throws IOException {
@@ -149,6 +168,7 @@ public class NioClient implements Runnable {
 
         // Handle the response
         this.handleResponse(socketChannel, this.readBuffer.array(), numRead);
+
     }
 
     private void handleResponse(SocketChannel socketChannel, byte[] data, int numRead) throws IOException {
@@ -231,30 +251,6 @@ public class NioClient implements Runnable {
         key.interestOps(SelectionKey.OP_WRITE);
     }
 
-    private SocketChannel initiateConnection() throws IOException {
-        // Create a non-blocking socket channel
-        SocketChannel socketChannel = SocketChannel.open();
-        socketChannel.configureBlocking(false);
-
-        // Kick off connection establishment
-        socketChannel.connect(new InetSocketAddress(this.hostAddress, this.port));
-
-        // Queue a channel registration since the caller is not the
-        // selecting thread. As part of the registration we'll register
-        // an interest in connection events. These are raised when a channel
-        // is ready to complete connection establishment.
-        synchronized (this.pendingChanges) {
-            this.pendingChanges.add(new ChangeRequest(socketChannel, ChangeRequest.REGISTER, SelectionKey.OP_CONNECT));
-        }
-
-        return socketChannel;
-    }
-
-    private Selector initSelector() throws IOException {
-        // Create a new selector
-        return SelectorProvider.provider().openSelector();
-    }
-
 //    static public void processData(byte[] data, int count) {
 //        System.out.println("count from processdata: "+count);
 //        byte[] dataCopy = new byte[count];
@@ -279,22 +275,27 @@ public class NioClient implements Runnable {
 //
 //    }
 
-    //method start with id=0 (short) and the int is for the size of the grid
-    static private byte[] start(int gridSize){
-        ByteBuffer buffer = ByteBuffer.allocate(6);
-        buffer.putShort(((short) 0));
-//        System.out.println(buffer.toString());
-        buffer.putInt(gridSize);
-//        System.out.println(buffer.toString());
-        return buffer.array();
+    private SocketChannel initiateConnection() throws IOException {
+        // Create a non-blocking socket channel
+        SocketChannel socketChannel = SocketChannel.open();
+        socketChannel.configureBlocking(false);
+
+        // Kick off connection establishment
+        socketChannel.connect(new InetSocketAddress(this.hostAddress, this.port));
+
+        // Queue a channel registration since the caller is not the
+        // selecting thread. As part of the registration we'll register
+        // an interest in connection events. These are raised when a channel
+        // is ready to complete connection establishment.
+        synchronized (this.pendingChanges) {
+            this.pendingChanges.add(new ChangeRequest(socketChannel, ChangeRequest.REGISTER, SelectionKey.OP_CONNECT));
+        }
+
+        return socketChannel;
     }
 
-    static private byte[] move(short direction){
-        ByteBuffer buffer = ByteBuffer.allocate(4);
-        buffer.putShort(((short) 1));
-//        System.out.println(buffer.toString());
-        buffer.putShort(direction);
-//        System.out.println(buffer.toString());
-        return buffer.array();
+    private Selector initSelector() throws IOException {
+        // Create a new selector
+        return SelectorProvider.provider().openSelector();
     }
 }

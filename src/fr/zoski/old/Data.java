@@ -1,4 +1,4 @@
-package fr.zoski;
+package fr.zoski.old;
 
 import java.io.Serializable;
 
