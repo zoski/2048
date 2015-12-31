@@ -1,5 +1,9 @@
 package fr.zoski.rox;
 
+import fr.zoski.game.Game2048;
+import fr.zoski.game.view.Game2048Frame;
+import fr.zoski.game.view.Game2048GraphModel;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -38,11 +42,14 @@ public class NioClient implements Runnable {
 
     public static void main(String[] args) {
         try {
-            NioClient client = new NioClient(InetAddress.getByName("alberola.me"), 8080);
+            //System.out.println("Cell added at ["+x+"]["+y+"].");
+//            NioClient client = new NioClient(InetAddress.getByName("alberola.me"), 8080);
+            NioClient client = new NioClient(InetAddress.getByName("localhost"), 8080);
             Thread t = new Thread(client);
             t.setDaemon(true);
             t.start();
             RspHandler handler = new RspHandler();
+            new Game2048Frame(new Game2048GraphModel(4));
 //            client.send(start(666), handler);    //send to server
             client.send(move(((short) 2)), handler);    //move is sent to server
             handler.waitForResponse();

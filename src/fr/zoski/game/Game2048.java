@@ -6,6 +6,7 @@ package fr.zoski.game;
 
 import fr.zoski.game.model.Game2048Model;
 import fr.zoski.game.view.Game2048Frame;
+import fr.zoski.game.view.Game2048GraphModel;
 
 import javax.swing.SwingUtilities;
 
@@ -17,7 +18,7 @@ public class Game2048 implements Runnable {
 
     @Override
     public void run() {
-        new Game2048Frame(new Game2048Model(4));
+        new Game2048Frame(new Game2048GraphModel(4));
     }
 
 }

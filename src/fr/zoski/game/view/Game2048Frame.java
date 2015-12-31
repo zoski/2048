@@ -1,12 +1,7 @@
 package fr.zoski.game.view;
 
 
-import fr.zoski.game.controller.DownArrowAction;
-import fr.zoski.game.controller.LeftArrowAction;
-import fr.zoski.game.controller.RightArrowAction;
-import fr.zoski.game.controller.UpArrowAction;
 import fr.zoski.game.misc.HighScoreProperties;
-import fr.zoski.game.model.Game2048Model;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,8 +15,9 @@ public class Game2048Frame {
 
     private ControlPanel controlPanel;
 
-    private Game2048Model model;
+//    private Game2048Model model;
 
+    private Game2048GraphModel model;
     private GridPanel gridPanel;
 
     private HighScoreProperties highScoreProperties;
@@ -30,10 +26,10 @@ public class Game2048Frame {
 
     private ScorePanel scorePanel;
 
-    public Game2048Frame(Game2048Model model) {
+    public Game2048Frame(Game2048GraphModel model) {
         this.model = model;
-        this.highScoreProperties = new HighScoreProperties(model);
-        this.highScoreProperties.loadProperties();
+//        this.highScoreProperties = new HighScoreProperties(model);
+//        this.highScoreProperties.loadProperties();
         createPartControl();
     }
 
@@ -95,14 +91,14 @@ public class Game2048Frame {
         inputMap.put(KeyStroke.getKeyStroke("RIGHT"), "right arrow");
 
 
-        gridPanel.getActionMap().put("up arrow",
-                new UpArrowAction(this, model));
-        gridPanel.getActionMap().put("down arrow",
-                new DownArrowAction(this, model));
-        gridPanel.getActionMap().put("left arrow",
-                new LeftArrowAction(this, model));
-        gridPanel.getActionMap().put("right arrow",
-                new RightArrowAction(this, model));
+//        gridPanel.getActionMap().put("up arrow",
+//                new UpArrowAction(this, model));
+//        gridPanel.getActionMap().put("down arrow",
+//                new DownArrowAction(this, model));
+//        gridPanel.getActionMap().put("left arrow",
+//                new LeftArrowAction(this, model));
+//        gridPanel.getActionMap().put("right arrow",
+//                new RightArrowAction(this, model));
     }
 
     public void exitProcedure() {

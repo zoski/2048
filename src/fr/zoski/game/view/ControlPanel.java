@@ -1,7 +1,6 @@
 package fr.zoski.game.view;
 
 import fr.zoski.game.controller.StartGameActionListener;
-import fr.zoski.game.model.Game2048Model;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,19 +15,18 @@ public class ControlPanel {
 
     private Game2048Frame frame;
 
-    private Game2048Model model;
+    private Game2048GraphModel model;
 
     private JPanel panel;
 
-    public ControlPanel(Game2048Frame frame, Game2048Model model) {
+    public ControlPanel(Game2048Frame frame, Game2048GraphModel model) {
         this.frame = frame;
         this.model = model;
         createPartControl();
     }
 
     private void createPartControl() {
-        StartGameActionListener listener =
-                new StartGameActionListener(frame, model);
+//        StartGameActionListener listener = new StartGameActionListener(frame, model);
 
         panel = new JPanel();
         panel.setLayout(new GridBagLayout());
@@ -36,7 +34,7 @@ public class ControlPanel {
         int gridy = 0;
 
         JButton startGameButton = new JButton("Start Game");
-        startGameButton.addActionListener(listener);
+//        startGameButton.addActionListener(listener);
         addComponent(panel, startGameButton, 0, gridy++, 1, 1,
                 regularInsets, GridBagConstraints.LINE_START,
                 GridBagConstraints.HORIZONTAL);

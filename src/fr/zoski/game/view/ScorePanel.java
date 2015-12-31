@@ -1,7 +1,5 @@
 package fr.zoski.game.view;
 
-import fr.zoski.game.model.Game2048Model;
-
 import javax.swing.*;
 import java.awt.*;
 import java.text.NumberFormat;
@@ -19,7 +17,7 @@ public class ScorePanel {
     private static final NumberFormat nf =
             NumberFormat.getInstance();
 
-    private Game2048Model model;
+    private Game2048GraphModel model;
 
     private JPanel panel;
 
@@ -28,7 +26,7 @@ public class ScorePanel {
     private JTextField currentScoreField;
     private JTextField currentCellField;
 
-    public ScorePanel(Game2048Model model) {
+    public ScorePanel(Game2048GraphModel model) {
         this.model = model;
         createPartControl();
         updatePartControl();

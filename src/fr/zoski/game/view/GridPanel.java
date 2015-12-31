@@ -1,7 +1,5 @@
 package fr.zoski.game.view;
 
-import fr.zoski.game.model.Game2048Model;
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -13,11 +11,12 @@ public class GridPanel extends JPanel {
     private static final long serialVersionUID =
             4019841629547494495L;
 
-    private Game2048Model model;
+//    private Game2048Model model;
+    private Game2048GraphModel model;
 
     private GameOverImage image;
 
-    public GridPanel(Game2048Model model) {
+    public GridPanel(Game2048GraphModel model) {
         this.model = model;
         this.setPreferredSize(model.getPreferredSize());
         this.image = new GameOverImage(model);
@@ -29,8 +28,8 @@ public class GridPanel extends JPanel {
         super.paintComponent(g);
         model.draw(g);
 
-        if (model.isGameOver()) {
-            g.drawImage(image.getImage(), 0, 0, null);
-        }
+//        if (model.isGameOver()) {
+//            g.drawImage(image.getImage(), 0, 0, null);
+//        }
     }
 }

@@ -1,7 +1,5 @@
 package fr.zoski.game.view;
 
-import fr.zoski.game.model.Game2048Model;
-
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
@@ -14,9 +12,9 @@ public class GameOverImage implements Runnable {
 
     private BufferedImage image;
 
-    private Game2048Model model;
+    private Game2048GraphModel model;
 
-    public GameOverImage(Game2048Model model) {
+    public GameOverImage(Game2048GraphModel model) {
         this.model = model;
     }
 
