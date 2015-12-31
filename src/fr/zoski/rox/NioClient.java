@@ -44,30 +44,11 @@ public class NioClient implements Runnable {
             t.start();
             RspHandler handler = new RspHandler();
 //            client.send(start(666), handler);    //send to server
-            client.send(move(((short) 2)), handler);
+            client.send(move(((short) 2)), handler);    //move is sent to server
             handler.waitForResponse();
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    //method start with id=0 (short) and the int is for the size of the grid
-    static private byte[] start(int gridSize) {
-        ByteBuffer buffer = ByteBuffer.allocate(6);
-        buffer.putShort(((short) 0));
-//        System.out.println(buffer.toString());
-        buffer.putInt(gridSize);
-//        System.out.println(buffer.toString());
-        return buffer.array();
-    }
-
-    static private byte[] move(short direction) {
-        ByteBuffer buffer = ByteBuffer.allocate(4);
-        buffer.putShort(((short) 1));
-//        System.out.println(buffer.toString());
-        buffer.putShort(direction);
-//        System.out.println(buffer.toString());
-        return buffer.array();
     }
 
     public void send(byte[] data, RspHandler handler) throws IOException {
@@ -158,17 +139,17 @@ public class NioClient implements Runnable {
             return;
         }
 
-//		if (numRead == -1) {
-//			// Remote entity shut the socket down cleanly. Do the
-//			// same from our end and cancel the channel.
-////			key.channel().close();
-////			key.cancel();
-//			return;
-//		}
+        if (numRead == -1) {
+            // Remote entity shut the socket down cleanly. Do the
+            // same from our end and cancel the channel.
+//			key.channel().close();
+//			key.cancel();
+            System.out.println("numRead = "+numRead);
+            return;
+        }
 
         // Handle the response
         this.handleResponse(socketChannel, this.readBuffer.array(), numRead);
-
     }
 
     private void handleResponse(SocketChannel socketChannel, byte[] data, int numRead) throws IOException {
@@ -193,18 +174,9 @@ public class NioClient implements Runnable {
                 grid[k] = bb.getShort();
                 System.out.println(grid[k]);
             }
-            System.out.println("Index 3 wanted): " + id + " ; size : " + size + " grid de short: "+ grid.toString());
+            System.out.println("Index 3 wanted): " + id + " ; size : " + size );
 
         }
-
-//        processData(handler.getRsp(),numRead);
-
-        // And pass the response to it
-//        if (handler.handleResponse(rspData)) {
-//            // The handler has seen enough, close the connection
-////			socketChannel.close();
-////			socketChannel.keyFor(this.selector).cancel();
-//        }
     }
 
     private void write(SelectionKey key) throws IOException {
@@ -251,30 +223,6 @@ public class NioClient implements Runnable {
         key.interestOps(SelectionKey.OP_WRITE);
     }
 
-//    static public void processData(byte[] data, int count) {
-//        System.out.println("count from processdata: "+count);
-//        byte[] dataCopy = new byte[count];
-//        System.out.println("datacopy: "+dataCopy.toString());
-//        System.arraycopy(data, 0, dataCopy, 0, count);
-//
-//        // Wrapping the byte[] whithin a ByteBuffer
-//        ByteBuffer bb = ByteBuffer.wrap(dataCopy);
-//
-//        short id = bb.getShort();
-//        System.out.println("Id read : " + id);
-//
-//        // Chosing the good action depending the id
-//        if(id == 3){
-//            short size = bb.getShort();
-//            short[] grid = new short[size];
-//            for(int k=0;k<(int)size;k++){
-//                grid[k] = bb.getShort();
-//            }
-//            System.out.println("Index 3 wanted): " + id + " ; size : " + size + " grid de short: "+ grid.toString());
-//        }
-//
-//    }
-
     private SocketChannel initiateConnection() throws IOException {
         // Create a non-blocking socket channel
         SocketChannel socketChannel = SocketChannel.open();
@@ -297,5 +245,26 @@ public class NioClient implements Runnable {
     private Selector initSelector() throws IOException {
         // Create a new selector
         return SelectorProvider.provider().openSelector();
+    }
+
+    //Methods for the communication with the server
+
+    //method start with id=0 (short) and the int is for the size of the grid
+    static private byte[] start(int gridSize){
+        ByteBuffer buffer = ByteBuffer.allocate(6);
+        buffer.putShort(((short) 0));
+//        System.out.println(buffer.toString());
+        buffer.putInt(gridSize);
+//        System.out.println(buffer.toString());
+        return buffer.array();
+    }
+
+    static private byte[] move(short direction){
+        ByteBuffer buffer = ByteBuffer.allocate(4);
+        buffer.putShort(((short) 1));
+//        System.out.println(buffer.toString());
+        buffer.putShort(direction);
+//        System.out.println(buffer.toString());
+        return buffer.array();
     }
 }
