@@ -11,8 +11,6 @@ import java.awt.event.ActionEvent;
  */
 public class DownArrowAction {
 
-    private static final long serialVersionUID = 7347478777733160296L;
-
     private Game2048Model model;
 
     public DownArrowAction(Game2048Model model) {

@@ -1,7 +1,6 @@
 package fr.zoski.server;
 
 import fr.zoski.rox.ChangeRequest;
-import fr.zoski.server.GameWorker;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -52,7 +51,7 @@ public class GameServer implements Runnable {
             new Thread(new GameServer(null, 8080, worker)).start();
             System.out.println("Server started on port 8080 ");
 
-            System.out.println("  ");
+
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -216,11 +215,21 @@ public class GameServer implements Runnable {
         return socketSelector;
     }
 
+    /**
+     * Create a RANDOM grid and put it in a ByteBuffer
+     * Message format :
+     * Grid id     = 3
+     * Grid size
+     * The Actual Grid
+     *
+     * @param size
+     * @return a ByteBufferArray
+     */
     public byte[] grid(int size) {
         System.out.println("Grid time...");
         ByteBuffer bb = ByteBuffer.allocate(6 + 2 * size);
 
-        // id
+        // id   = grid following
         bb.putShort((short) 3);
         // size
         bb.putInt(size);
