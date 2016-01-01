@@ -1,4 +1,7 @@
-package fr.zoski.rox;
+package fr.zoski.server;
+
+import fr.zoski.rox.ChangeRequest;
+import fr.zoski.server.GameWorker;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -12,7 +15,7 @@ import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.SelectorProvider;
 import java.util.*;
 
-public class NioServer implements Runnable {
+public class GameServer implements Runnable {
     // The host:port combination to listen on
     private InetAddress hostAddress;
     private int port;
@@ -26,7 +29,7 @@ public class NioServer implements Runnable {
     // The buffer into which we'll read data when it's available
     private ByteBuffer readBuffer = ByteBuffer.allocate(8192);
 
-    private EchoWorker worker;
+    private GameWorker worker;
 
     // A list of PendingChange instances
     private List pendingChanges = new LinkedList();
@@ -34,7 +37,7 @@ public class NioServer implements Runnable {
     // Maps a SocketChannel to a list of ByteBuffer instances
     private Map pendingData = new HashMap();
 
-    public NioServer(InetAddress hostAddress, int port, EchoWorker worker) throws IOException {
+    public GameServer(InetAddress hostAddress, int port, GameWorker worker) throws IOException {
         this.hostAddress = hostAddress;
         this.port = port;
         this.selector = this.initSelector();
@@ -44,15 +47,12 @@ public class NioServer implements Runnable {
     public static void main(String[] args) {
 
         try {
-            EchoWorker worker = new EchoWorker();
+            GameWorker worker = new GameWorker();
             new Thread(worker).start();
-            new Thread(new NioServer(null, 8080, worker)).start();
+            new Thread(new GameServer(null, 8080, worker)).start();
             System.out.println("Server started on port 8080 ");
 
-
             System.out.println("  ");
-
-
 
         } catch (IOException e) {
             e.printStackTrace();

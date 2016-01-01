@@ -1,13 +1,15 @@
 package fr.zoski.rox;
 
+import fr.zoski.server.GameServer;
+
 import java.nio.channels.SocketChannel;
 
 public class ServerDataEvent {
-    public NioServer server;
+    public GameServer server;
     public SocketChannel socket;
     public byte[] data;
 
-    public ServerDataEvent(NioServer server, SocketChannel socket, byte[] data) {
+    public ServerDataEvent(GameServer server, SocketChannel socket, byte[] data) {
         this.server = server;
         this.socket = socket;
         this.data = data;
