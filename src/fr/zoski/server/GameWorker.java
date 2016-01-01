@@ -3,10 +3,14 @@ package fr.zoski.server;
 
 import fr.zoski.game.model.Game2048Model;
 import fr.zoski.rox.ServerDataEvent;
+import fr.zoski.server.action.*;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class GameWorker implements Runnable {
     private List queue = new LinkedList();
@@ -21,13 +25,18 @@ public class GameWorker implements Runnable {
         //@TODO Ask for the grid Game size at first connection
         int gridSize = 4;
 
-        /** Testing if the client is already recorded*/
+        /** Testing if the client is already recorded */
         if (games.containsKey(socket)) {
-            currentGame = games.get(socket);    //shortcut for next call
+            // the client is already in the map
+            currentGame = games.get(socket);
+
         } else {
-            //@TODO Do the initialization of the new Game
+            // it's a new client -> let's start a new game
             currentGame = new Game2048Model(gridSize);
             games.put(socket, currentGame);
+            // doing the grid initialization
+            StartGameAction start = new StartGameAction(currentGame);
+            start.actionPerformed();
         }
 
         /** Starting parsing here */
@@ -40,42 +49,45 @@ public class GameWorker implements Runnable {
             case 0: // START OR RESTART
                 int size = bb.getInt();
                 System.out.println("Asked for a new Grid size : " + size);
+                StartGameAction start = new StartGameAction(currentGame);
+                start.actionPerformed();
                 break;
 
             case 1: // DIRECTION INPUT
-                short dir = bb.getShort();  //direction reveived
+                short dir = bb.getShort();  //direction received
                 System.out.println("Direction received : " + dir);
 
-                if (currentGame.isArrowActive()) {
-                    switch (dir) {
-                        case 1:
-                            System.out.println("Direction interpreted : TOP");
-                            if (currentGame.moveCellsUp()) {
-                                currentGame.addNewCell();
+                switch (dir) {
+                    case 1:
+                        System.out.println("Direction interpreted : TOP");
+                        UpArrowAction up = new UpArrowAction(currentGame);
+                        up.actionPerformed();
+                        break;
 
+                    case 2:
+                        System.out.println("Direction interpreted : DOWN");
+                        DownArrowAction down = new DownArrowAction(currentGame);
+                        down.actionPerformed();
+                        break;
 
-                            }
-                            break;
+                    case 3:
+                        System.out.println("Direction interpreted : LEFT");
+                        LeftArrowAction left = new LeftArrowAction(currentGame);
+                        left.actionPerformed();
+                        break;
 
-                        case 2:
-                            System.out.println("Direction interpreted : DOWN");
-                            break;
+                    case 4:
+                        System.out.println("Direction interpreted : RIGHT");
+                        RightArrowAction right = new RightArrowAction(currentGame);
+                        right.actionPerformed();
+                        break;
 
-                        case 3:
-                            System.out.println("Direction interpreted : LEFT");
-                            break;
-
-                        case 4:
-                            System.out.println("Direction interpreted : RIGHT");
-                            break;
-
-                        default:
-                            System.out.println("Wrong direction...\n" +
-                                    "Something when wrong");
-                            break;
-                    }
-
+                    default:
+                        System.out.println("Wrong direction...\n" +
+                                "Something when wrong");
+                        break;
                 }
+
                 break;
 
             default:
@@ -117,4 +129,6 @@ public class GameWorker implements Runnable {
 
         }
     }
+
+
 }

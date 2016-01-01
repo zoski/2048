@@ -1,7 +1,5 @@
 package fr.zoski.game.view;
 
-import fr.zoski.game.controller.StartGameActionListener;
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -26,7 +24,7 @@ public class ControlPanel {
     }
 
     private void createPartControl() {
-//        StartGameActionListener listener = new StartGameActionListener(frame, model);
+//        StartGameAction listener = new StartGameAction(frame, model);
 
         panel = new JPanel();
         panel.setLayout(new GridBagLayout());
