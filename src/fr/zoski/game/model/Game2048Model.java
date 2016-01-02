@@ -370,12 +370,15 @@ public class Game2048Model {
 
     /**
      * Format the grid to be ready to be send to the client
-     *
-     * @return
+     *  Format :
+     *      (Short)        ID of the message : here 3
+     *      (Int)          _size_ of the grid
+     *      size²(Short)      Grid content
+     * @return byte[] to be send by the server
      */
     public byte[] getGrid() {
         int size = this.grid_width;
-        ByteBuffer out = ByteBuffer.allocate(6 + 2 * size * size);
+        ByteBuffer out = ByteBuffer.allocate(2 + 4 + 2 * size * size);
 
         // starting to prepare message
         out.putShort((short) 3);    // grid id
@@ -383,12 +386,44 @@ public class Game2048Model {
 
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
-                out.putShort((short) this.getCell(x, y).getValue()); //adding cells
+                out.putShort((short) this.getCell(x, y).getValue()); //adding cell
             }
         }
-        System.out.println("\n[Message send] : " + out.array().toString() + "\n");
         return out.array();
     }
+
+    /**
+     * Format the score to be send to the client
+     * Format :
+     * (Short) Score Id : 4
+     * (Int)   Score
+     *
+     * @return byte[] to be send by the server
+     */
+    public byte[] getScore() {
+        ByteBuffer score = ByteBuffer.allocate(2 + 4);
+        score.putShort((short) 4);
+        score.putInt(this.currentScore);
+        return score.array();
+    }
+
+    /**
+     * Format the GameOver message to be send to the client
+     * Format :
+     * (Short) Score Id : 5
+     * (Int)   Score
+     * (Int)   High Score
+     *
+     * @return byte[] to be send by the server
+     */
+    public byte[] getGameOver() {
+        ByteBuffer gameOver = ByteBuffer.allocate(2 + 4 + 4);
+        gameOver.putShort((short) 5);
+        gameOver.putInt(this.currentScore);
+        gameOver.putInt(this.highScore);
+        return gameOver.array();
+    }
+
 
     public void draw(Graphics g) {
         g.setColor(Color.DARK_GRAY);
