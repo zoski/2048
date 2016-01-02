@@ -51,11 +51,32 @@ public class NioClient implements Runnable {
             RspHandler handler = new RspHandler();
             new Game2048Frame(new Game2048GraphModel(4));
 //            client.send(start(666), handler);    //send to server
-            client.send(move(((short) 2)), handler);    //move is sent to server
+            client.send(move(((short) 1)), handler);    //move is sent to server
+
+
             handler.waitForResponse();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    //method start with id=0 (short) and the int is for the size of the grid
+    static private byte[] start(int gridSize) {
+        ByteBuffer buffer = ByteBuffer.allocate(6);
+        buffer.putShort(((short) 0));
+//        System.out.println(buffer.toString());
+        buffer.putInt(gridSize);
+//        System.out.println(buffer.toString());
+        return buffer.array();
+    }
+
+    static private byte[] move(short direction) {
+        ByteBuffer buffer = ByteBuffer.allocate(4);
+        buffer.putShort(((short) 1));
+//        System.out.println(buffer.toString());
+        buffer.putShort(direction);
+//        System.out.println(buffer.toString());
+        return buffer.array();
     }
 
     public void send(byte[] data, RspHandler handler) throws IOException {
@@ -176,8 +197,8 @@ public class NioClient implements Runnable {
         // Chosing the good action depending the id
         if(id == 3){
             int size = bb.getInt();
-            short[] grid = new short[size];
-            for(int k=0;k<(int)size;k++){
+            short[] grid = new short[size * size];
+            for (int k = 0; k < (int) size * size; k++) {
                 grid[k] = bb.getShort();
                 System.out.println(grid[k]);
             }
@@ -230,6 +251,8 @@ public class NioClient implements Runnable {
         key.interestOps(SelectionKey.OP_WRITE);
     }
 
+    //Methods for the communication with the server
+
     private SocketChannel initiateConnection() throws IOException {
         // Create a non-blocking socket channel
         SocketChannel socketChannel = SocketChannel.open();
@@ -252,26 +275,5 @@ public class NioClient implements Runnable {
     private Selector initSelector() throws IOException {
         // Create a new selector
         return SelectorProvider.provider().openSelector();
-    }
-
-    //Methods for the communication with the server
-
-    //method start with id=0 (short) and the int is for the size of the grid
-    static private byte[] start(int gridSize){
-        ByteBuffer buffer = ByteBuffer.allocate(6);
-        buffer.putShort(((short) 0));
-//        System.out.println(buffer.toString());
-        buffer.putInt(gridSize);
-//        System.out.println(buffer.toString());
-        return buffer.array();
-    }
-
-    static private byte[] move(short direction){
-        ByteBuffer buffer = ByteBuffer.allocate(4);
-        buffer.putShort(((short) 1));
-//        System.out.println(buffer.toString());
-        buffer.putShort(direction);
-//        System.out.println(buffer.toString());
-        return buffer.array();
     }
 }

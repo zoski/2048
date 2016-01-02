@@ -1,6 +1,7 @@
 package fr.zoski.game.model;
 
 import java.awt.*;
+import java.nio.ByteBuffer;
 import java.util.Random;
 
 /**
@@ -365,6 +366,28 @@ public class Game2048Model {
         int width = grid_width * Cell.getCellWidth() +
                 FRAME_THICKNESS * 5;
         return new Dimension(width, width);
+    }
+
+    /**
+     * Format the grid to be ready to be send to the client
+     *
+     * @return
+     */
+    public byte[] getGrid() {
+        int size = this.grid_width;
+        ByteBuffer out = ByteBuffer.allocate(6 + 2 * size * size);
+
+        // starting to prepare message
+        out.putShort((short) 3);    // grid id
+        out.putInt(size);           // grid size
+
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
+                out.putShort((short) this.getCell(x, y).getValue()); //adding cells
+            }
+        }
+        System.out.println("\n[Message send] : " + out.array().toString() + "\n");
+        return out.array();
     }
 
     public void draw(Graphics g) {

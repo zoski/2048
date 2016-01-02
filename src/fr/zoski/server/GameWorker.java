@@ -16,17 +16,23 @@ public class GameWorker implements Runnable {
 
     private static final boolean DEBUG = true;
 
+
     private List queue = new LinkedList();
     private Map<SocketChannel, Game2048Model> games = new HashMap<>();
 
     public void processData(GameServer server, SocketChannel socket, byte[] data, int count) {
         Game2048Model currentGame;
         byte[] dataCopy = new byte[count];
-        System.arraycopy(data, 0, dataCopy, 0, count);
-        ByteBuffer bb = ByteBuffer.wrap(dataCopy);  // Wrapping the byte[] whithin a ByteBuffer
 
         //@TODO Ask for the grid Game size at first connection
         int gridSize = 4;
+
+        byte[] outMessage;    //the message to be send
+
+        System.arraycopy(data, 0, dataCopy, 0, count);
+        ByteBuffer bb = ByteBuffer.wrap(dataCopy);  // Wrapping the byte[] within a ByteBuffer
+
+
 
         /** Testing if the client is already recorded */
         if (games.containsKey(socket)) {
@@ -77,10 +83,8 @@ public class GameWorker implements Runnable {
                         UpArrowAction up = new UpArrowAction(currentGame);
                         up.actionPerformed();
 
-                        //this.run();
-                        //ServerDataEvent dataEvent;
-                        //dataEvent.server.send(dataEvent.socket, dataEvent.server.grid(10));
-
+                        if (DEBUG)
+                            System.out.println("In the TOP case : " + queue.toString());
 
                         break;
 
@@ -109,10 +113,8 @@ public class GameWorker implements Runnable {
                         if (DEBUG)
                             System.out.println("Something when wrong. Message received \n\t" +
                                     " id : " + id + " dir : " + dir);
-
                         break;
-                }
-
+                }   // end switch case direction
                 break;
 
             default:
@@ -120,15 +122,20 @@ public class GameWorker implements Runnable {
                     System.out.println("Something when wrong. Message received \n\t" +
                             " id : " + id);
                 break;
+        }   //end switch case
 
-        }
+        /** Setting the message to be send */
+        outMessage = currentGame.getGrid();
 
         // Decoding and displaying the received data
         //System.out.println("Data received : " + Charset.defaultCharset().decode(bb));
 
+        // Adding the received data to the queue
         synchronized (queue) {
-            queue.add(new ServerDataEvent(server, socket, dataCopy));
+            queue.add(new ServerDataEvent(server, socket, outMessage));
             queue.notify();
+            if (DEBUG)
+                System.out.println("At the end of the processData : " + queue.toString());
         }
     }
 
@@ -145,12 +152,16 @@ public class GameWorker implements Runnable {
                     }
                 }
                 dataEvent = (ServerDataEvent) queue.remove(0);
+                if (DEBUG)
+                    System.out.println("Cleaning the first dataEvent" + dataEvent + " of the queue");
             }
 
             // Return to sender
-            dataEvent.server.send(dataEvent.socket, dataEvent.server.grid(10));
+            //dataEvent.server.send(dataEvent.socket, dataEvent.server.grid(10));
+            if (DEBUG)
+                System.out.println("Sending message... ");
 
-            //dataEvent.server.send(dataEvent.socket, dataEvent.data);
+            dataEvent.server.send(dataEvent.socket, dataEvent.data);
 
 
         }
