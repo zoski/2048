@@ -1,8 +1,10 @@
 package fr.zoski.rox;
 
 import fr.zoski.game.Game2048;
+import fr.zoski.game.model.Cell;
 import fr.zoski.game.view.Game2048Frame;
 import fr.zoski.game.view.Game2048GraphModel;
+import fr.zoski.game.view.GridPanel;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -15,6 +17,15 @@ import java.nio.channels.spi.SelectorProvider;
 import java.util.*;
 
 public class NioClient implements Runnable {
+
+    //gridSize
+    private static int gridSize = 4;
+
+    //Game2048Frame, to print it on screen
+    private static Game2048GraphModel gameGraphModel;
+    private static Game2048Frame gameFrame;
+    private GridPanel gameGridPanel;
+
     // The host:port combination to connect to
     private InetAddress hostAddress;
     private int port;
@@ -49,7 +60,8 @@ public class NioClient implements Runnable {
             t.setDaemon(true);
             t.start();
             RspHandler handler = new RspHandler();
-            new Game2048Frame(new Game2048GraphModel(4));
+            gameGraphModel = new Game2048GraphModel(gridSize);
+            gameFrame = new Game2048Frame(gameGraphModel);
 //            client.send(start(666), handler);    //send to server
             client.send(move(((short) 1)), handler);    //move is sent to server
 
@@ -203,7 +215,7 @@ public class NioClient implements Runnable {
                 System.out.println(grid[k]);
             }
             System.out.println("Index 3 wanted): " + id + " ; size : " + size );
-
+            setCells(grid);
         }
     }
 
@@ -275,5 +287,39 @@ public class NioClient implements Runnable {
     private Selector initSelector() throws IOException {
         // Create a new selector
         return SelectorProvider.provider().openSelector();
+    }
+
+    public void setGridSize(int size){
+        gridSize = size;
+    }
+
+    //with the list of short (cell values), create Cell[][] to have a grid
+    private Cell[][] getCells(short[] cellGrid){
+        Cell[][] cells = new Cell[gridSize][gridSize];
+        for(int k=0;k<gridSize;k++){
+            for(int x=0; x<gridSize;x++){
+                for (int y=0; y<gridSize;y++){
+                    Cell cell = new Cell(cellGrid[k]);
+                    k++;
+                    cell.setCellLocation(x, y);
+                    cells[x][y] = cell;
+                    System.out.println(cell.getValue());
+                }
+            }
+        }
+        return cells;
+    }
+
+    private void setCells(short[] cellGrid) {
+//        gameGraphModel.setGrid(getCells(cellGrid));
+//        gameFrame.repaintGridPanel();
+        int i = 0;
+		for (int x = 0; x < gridSize; x++) {
+            for (int y = 0; y < gridSize; y++) {
+            	this.gameGraphModel.getCell(x, y).setValue(cellGrid[i]);
+                System.out.println(cellGrid[i]);
+            	i++;
+            }
+		}
     }
 }
