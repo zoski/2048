@@ -40,7 +40,7 @@ public class Game2048Frame {
 
         frame = new JFrame();
         frame.setTitle("2048");
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent event) {
@@ -59,6 +59,7 @@ public class Game2048Frame {
         frame.setLocationByPlatform(true);
         frame.pack();
         frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     private JPanel createSidePanel() {
@@ -103,7 +104,7 @@ public class Game2048Frame {
 
     public void exitProcedure() {
         model.setHighScores();
-        highScoreProperties.saveProperties();
+//        highScoreProperties.saveProperties();
         frame.dispose();
         System.exit(0);
     }
