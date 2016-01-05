@@ -1,6 +1,7 @@
 package fr.zoski.rox;
 
 import fr.zoski.game.Game2048;
+import fr.zoski.game.misc.ActionMovesListener;
 import fr.zoski.game.model.Cell;
 import fr.zoski.game.view.Game2048Frame;
 import fr.zoski.game.view.Game2048GraphModel;
@@ -24,7 +25,7 @@ public class NioClient implements Runnable {
     //Game2048Frame, to print it on screen
     private static Game2048GraphModel gameGraphModel;
     private static Game2048Frame gameFrame;
-    private GridPanel gameGridPanel;
+    private static ActionMovesListener actionMovesListener;
 
     // The host:port combination to connect to
     private InetAddress hostAddress;
@@ -45,6 +46,9 @@ public class NioClient implements Runnable {
     // Maps a SocketChannel to a RspHandler
     private Map rspHandlers = Collections.synchronizedMap(new HashMap());
 
+    //SocketChannel, need to keep the connection
+    private SocketChannel socketChannel = null;
+
     public NioClient(InetAddress hostAddress, int port) throws IOException {
         this.hostAddress = hostAddress;
         this.port = port;
@@ -60,10 +64,15 @@ public class NioClient implements Runnable {
             t.setDaemon(true);
             t.start();
             RspHandler handler = new RspHandler();
+            //initialize model, frame, listener
             gameGraphModel = new Game2048GraphModel(gridSize);
             gameFrame = new Game2048Frame(gameGraphModel);
-//            client.send(start(666), handler);    //send to server
-            client.send(move(((short) 1)), handler);    //move is sent to server
+            ActionMovesListener listener = new ActionMovesListener(gameFrame, gameGraphModel,client,handler);
+            gameFrame.getControlPanel().getStartButton().addActionListener(listener);
+
+            //Method start and move are just below
+//            client.send(start(4), handler);    //send to server //4 encore en dur
+//            client.send(move(((short) 1)), handler);    //move is sent to server
 
 
             handler.waitForResponse();
@@ -73,7 +82,7 @@ public class NioClient implements Runnable {
     }
 
     //method start with id=0 (short) and the int is for the size of the grid
-    static private byte[] start(int gridSize) {
+    static public byte[] start(int gridSize) {
         ByteBuffer buffer = ByteBuffer.allocate(6);
         buffer.putShort(((short) 0));
 //        System.out.println(buffer.toString());
@@ -82,7 +91,7 @@ public class NioClient implements Runnable {
         return buffer.array();
     }
 
-    static private byte[] move(short direction) {
+    static public byte[] move(short direction) {
         ByteBuffer buffer = ByteBuffer.allocate(4);
         buffer.putShort(((short) 1));
 //        System.out.println(buffer.toString());
@@ -166,6 +175,7 @@ public class NioClient implements Runnable {
 
         // Clear out our read buffer so it's ready for new data
         this.readBuffer.clear();
+        System.out.println("clear buffer: "+readBuffer);
 
         // Attempt to read off the channel
         int numRead;
@@ -198,6 +208,10 @@ public class NioClient implements Runnable {
         byte[] dataCopy = new byte[numRead];
         System.arraycopy(data, 0, dataCopy, 0, numRead);
 
+        System.out.println("numRead: "+numRead);
+        System.out.println("data length:  "+data.length);
+        System.out.println("data: "+data + "data[0]" +data[0]);
+
         // Look up the handler for this channel
 //        RspHandler handler = (RspHandler) this.rspHandlers.get(socketChannel);
         // Wrapping the byte[] whithin a ByteBuffer
@@ -212,9 +226,9 @@ public class NioClient implements Runnable {
             short[] grid = new short[size * size];
             for (int k = 0; k < (int) size * size; k++) {
                 grid[k] = bb.getShort();
-                System.out.println(grid[k]);
+//                System.out.println(grid[k]);
             }
-            System.out.println("Index 3 wanted): " + id + " ; size : " + size );
+//            System.out.println("Index 3 wanted): " + id + " ; size : " + size );
             setCells(grid);
         }
     }
@@ -254,7 +268,7 @@ public class NioClient implements Runnable {
             socketChannel.finishConnect();
         } catch (IOException e) {
             // Cancel the channel's registration with our selector
-            System.out.println(e);
+//            System.out.println(e);
             key.cancel();
             return;
         }
@@ -263,16 +277,16 @@ public class NioClient implements Runnable {
         key.interestOps(SelectionKey.OP_WRITE);
     }
 
-    //Methods for the communication with the server
-
     private SocketChannel initiateConnection() throws IOException {
-        // Create a non-blocking socket channel
-        SocketChannel socketChannel = SocketChannel.open();
-        socketChannel.configureBlocking(false);
 
-        // Kick off connection establishment
-        socketChannel.connect(new InetSocketAddress(this.hostAddress, this.port));
+        if(socketChannel==null) {
+            // Create a non-blocking socket channel
+            socketChannel = SocketChannel.open();
+            socketChannel.configureBlocking(false);
 
+            // Kick off connection establishment
+            socketChannel.connect(new InetSocketAddress(this.hostAddress, this.port));
+        }
         // Queue a channel registration since the caller is not the
         // selecting thread. As part of the registration we'll register
         // an interest in connection events. These are raised when a channel
@@ -303,7 +317,7 @@ public class NioClient implements Runnable {
                     k++;
                     cell.setCellLocation(x, y);
                     cells[x][y] = cell;
-                    System.out.println(cell.getValue());
+//                    System.out.println(cell.getValue());
                 }
             }
         }
@@ -311,15 +325,14 @@ public class NioClient implements Runnable {
     }
 
     private void setCells(short[] cellGrid) {
-//        gameGraphModel.setGrid(getCells(cellGrid));
-//        gameFrame.repaintGridPanel();
         int i = 0;
 		for (int x = 0; x < gridSize; x++) {
             for (int y = 0; y < gridSize; y++) {
             	this.gameGraphModel.getCell(x, y).setValue(cellGrid[i]);
-                System.out.println(cellGrid[i]);
+//                System.out.println(cellGrid[i]);
             	i++;
             }
 		}
+        gameFrame.repaintGridPanel();
     }
 }

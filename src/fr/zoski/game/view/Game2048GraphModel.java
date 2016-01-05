@@ -56,18 +56,6 @@ public class Game2048GraphModel {
         currentScore = 0;
         currentCell = 0;
     }
-
-    private String displayAddCell(int x, int y) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Cell added at [");
-        builder.append(x);
-        builder.append("][");
-        builder.append(y);
-        builder.append("].");
-
-        return builder.toString();
-    }
-
     private void updateScore(int value, int cellValue) {
         currentScore += value;
         currentCell = (cellValue > currentCell) ?
@@ -102,10 +90,13 @@ public class Game2048GraphModel {
         return currentCell;
     }
 
-//    public void setGrid(Cell[][] cells){
-//        this.grid = cells;
-//    }
+    public boolean isArrowActive() {
+        return arrowActive;
+    }
 
+    public void setArrowActive(boolean arrowActive) {
+        this.arrowActive = arrowActive;
+    }
 
     public Dimension getPreferredSize() {
         int width = grid_width * Cell.getCellWidth() +
@@ -124,4 +115,10 @@ public class Game2048GraphModel {
             }
         }
     }
+
+    public int getGrid_width(){
+        return grid_width;
+    }
+
+
 }

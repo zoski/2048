@@ -8,10 +8,8 @@ import java.awt.*;
  */
 public class GridPanel extends JPanel {
 
-    private static final long serialVersionUID =
-            4019841629547494495L;
+    private static final long serialVersionUID = 4019841629547494495L;
 
-//    private Game2048Model model;
     private Game2048GraphModel model;
 
     private GameOverImage image;

@@ -15,6 +15,8 @@ public class ControlPanel {
 
     private Game2048GraphModel model;
 
+    private JButton startGameButton;
+
     private JPanel panel;
 
     public ControlPanel(Game2048Frame frame, Game2048GraphModel model) {
@@ -31,7 +33,7 @@ public class ControlPanel {
 
         int gridy = 0;
 
-        JButton startGameButton = new JButton("Start Game");
+        startGameButton = new JButton("Start Game");
 //        startGameButton.addActionListener(listener);
         addComponent(panel, startGameButton, 0, gridy++, 1, 1,
                 regularInsets, GridBagConstraints.LINE_START,
@@ -50,4 +52,9 @@ public class ControlPanel {
     public JPanel getPanel() {
         return panel;
     }
+
+    public JButton getStartButton(){
+        return startGameButton;
+    }
+
 }
