@@ -160,7 +160,7 @@ public class GameServer implements Runnable {
         if (numRead == -1) {
             // Remote entity shut the socket down cleanly. Do the
             // same from our end and cancel the channel.
-            System.out.println("Client shuted down the socket" + socketChannel.toString() + "... bye bye");
+            System.out.println("client shuted down the socket" + socketChannel.toString() + "... bye bye");
             key.channel().close();
             key.cancel();
             return;

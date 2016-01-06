@@ -1,16 +1,13 @@
 package fr.zoski.game.misc;
 
-import fr.zoski.Client.Client;
+import fr.zoski.client.Client;
 import fr.zoski.game.view.Game2048Frame;
 import fr.zoski.game.view.Game2048GraphModel;
 import fr.zoski.game.view.GridPanel;
-import fr.zoski.rox.NioClient;
-import fr.zoski.rox.RspHandler;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 
 /**
  * Created by scrutch on 02/01/16.
@@ -57,10 +54,10 @@ public class ActionMovesListener implements ActionListener {  //implements KeySt
         System.out.println("1st"+gridPanel.getActionMap());
 
 
-//        gridPanel.getActionMap().put("up arrow", new UpArrowAction(this, model));
+        gridPanel.getActionMap().put("up arrow", new UpArrowAction(gameFrame,model,client,client.getWorker()));
         gridPanel.getActionMap().put("down arrow", new DownArrowAction(gameFrame,model,client,client.getWorker()));
-//        gridPanel.getActionMap().put("left arrow", new LeftArrowAction(this, model));
-//        gridPanel.getActionMap().put("right arrow", new RightArrowAction(this, model));
+        gridPanel.getActionMap().put("left arrow", new LeftArrowAction(gameFrame,model,client,client.getWorker()));
+        gridPanel.getActionMap().put("right arrow", new RightArrowAction(gameFrame,model,client,client.getWorker()));
 
         System.out.println("2"+gridPanel.getActionMap());
         System.out.println("contenu"+gridPanel.getActionMap().get("down arrow"));
@@ -72,15 +69,14 @@ public class ActionMovesListener implements ActionListener {  //implements KeySt
             System.out.println("je suis dans actionPerformed du ActionMovesListener");
 //            w.send(NioClient.start(model.getGrid_width()), handler);
 //            client.getWorker().sendingData();
-            client.getWorker().start(client.getGridSize());
+//            client.getWorker().start(client.getGridSize());
+            System.out.println("client socketchann"+client.getSocketChannel());
+//            client.send(client.getSocketChannel(),client.getWorker().startData(client.getGridSize()));
             model.setArrowActive(true);
             gameFrame.repaintGridPanel();
         }catch (Exception e) {
                 e.printStackTrace();
             }
-
     }
-
-
 
 }

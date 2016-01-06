@@ -1,4 +1,4 @@
-package fr.zoski.Client;
+package fr.zoski.client;
 
 import fr.zoski.game.misc.ActionMovesListener;
 import fr.zoski.game.view.Game2048Frame;
@@ -46,6 +46,7 @@ public class Client implements Runnable{
 
     private ClientWorker worker;
     private static int gridSize;
+    private SocketChannel socketChannel;
 
     public Client(InetAddress hostAddress, int port, ClientWorker worker) throws IOException {
         this.hostAddress = hostAddress;
@@ -61,7 +62,7 @@ public class Client implements Runnable{
 //            NioClient client = new NioClient(InetAddress.getByName("localhost"), 8080);
             ClientWorker worker = new ClientWorker();
             new Thread(worker).start();
-//            Client client = new Client(InetAddress.getByName("10.3.4.74"), 8080,worker);
+//            client client = new client(InetAddress.getByName("10.3.4.74"), 8080,worker);
             Client client = new Client(InetAddress.getByName("localhost"), 8080,worker);
             Thread t = new Thread(client);
             t.setDaemon(true);
@@ -161,6 +162,7 @@ public class Client implements Runnable{
 
         // Kick off connection establishment
         socketChannel.connect(new InetSocketAddress(this.hostAddress, this.port));
+        this.socketChannel = socketChannel;
 
         // Queue a channel registration since the caller is not the
         // selecting thread. As part of the registration we'll register
@@ -279,6 +281,8 @@ public class Client implements Runnable{
     public int getGridSize(){
         return gridSize;
     }
+
+    public SocketChannel getSocketChannel(){return socketChannel;}
 
 
 }

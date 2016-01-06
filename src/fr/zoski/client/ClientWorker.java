@@ -1,4 +1,4 @@
-package fr.zoski.Client;
+package fr.zoski.client;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by scrutch on 05/01/16.
  */
-public class ClientWorker implements  Runnable {
+public class ClientWorker implements Runnable {
 
     private static final boolean DEBUG = true;
     private List queue = new LinkedList();
@@ -76,9 +76,10 @@ public class ClientWorker implements  Runnable {
     }
 
     //send Data to server
-    public void sendingData(){
-        byte[] outMessage;    //the message to be send
+    public void sendingData(byte[] data){
+//        byte[] outMessage;    //the message to be send
 //        outMessage =
+//        client.
 
     }
 //        // Adding the received data to the queue
@@ -91,7 +92,7 @@ public class ClientWorker implements  Runnable {
 //    }
 
     //    public void actions
-    static public byte[] start(int gridSize) {
+    static public byte[] startData(int gridSize) {
     ByteBuffer buffer = ByteBuffer.allocate(6);
     buffer.putShort(((short) 0));
 //        System.out.println(buffer.toString());
@@ -99,8 +100,12 @@ public class ClientWorker implements  Runnable {
 //        System.out.println(buffer.toString());
     return buffer.array();
 }
+//    public void start(){
+//
+//    }
 
-    static public byte[] move(short direction) {
+
+    static public byte[] moveData(short direction) {
         ByteBuffer buffer = ByteBuffer.allocate(4);
         buffer.putShort(((short) 1));
 //        System.out.println(buffer.toString());
@@ -120,7 +125,6 @@ public class ClientWorker implements  Runnable {
             } catch (InterruptedException e) {
             }
         }
-
         System.out.println(new String(this.rsp));
     }
 

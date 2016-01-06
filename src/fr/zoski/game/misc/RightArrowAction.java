@@ -9,9 +9,9 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 /**
- * Created by scrutch on 04/01/16.
+ * Created by scrutch on 06/01/16.
  */
-public class DownArrowAction extends AbstractAction {
+public class RightArrowAction extends AbstractAction {
 
     private static short direction = 2;  //protocol stuff
 
@@ -23,7 +23,7 @@ public class DownArrowAction extends AbstractAction {
 
     private ClientWorker worker;
 
-    public DownArrowAction(Game2048Frame frame, Game2048GraphModel model, Client client, ClientWorker worker) {
+    public RightArrowAction(Game2048Frame frame, Game2048GraphModel model, Client client, ClientWorker worker) {
         this.frame = frame;
         this.model = model;
         this.client = client;
@@ -41,7 +41,7 @@ public class DownArrowAction extends AbstractAction {
 //                worker.send
 //                model.setArrowActive(false);
 //                frame.repaintGridPanel();
-                System.out.println("bas");
+                System.out.println("droite");
 
             }
             catch (Exception e) {
@@ -53,6 +53,4 @@ public class DownArrowAction extends AbstractAction {
     public static short getDirection(){
         return direction;
     }
-
-
 }

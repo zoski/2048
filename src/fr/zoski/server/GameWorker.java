@@ -32,13 +32,11 @@ public class GameWorker implements Runnable {
         System.arraycopy(data, 0, dataCopy, 0, count);
         ByteBuffer bb = ByteBuffer.wrap(dataCopy);  // Wrapping the byte[] within a ByteBuffer
 
-
-
         /** Testing if the client is already recorded */
         if (games.containsKey(socket)) {
             // the client is already in the map
             if (DEBUG)
-                System.out.println("Client already know...");
+                System.out.println("client already know...");
 
             currentGame = games.get(socket);
 
