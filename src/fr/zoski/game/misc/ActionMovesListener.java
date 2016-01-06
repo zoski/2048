@@ -1,5 +1,6 @@
 package fr.zoski.game.misc;
 
+import fr.zoski.Client.Client;
 import fr.zoski.game.view.Game2048Frame;
 import fr.zoski.game.view.Game2048GraphModel;
 import fr.zoski.game.view.GridPanel;
@@ -22,16 +23,13 @@ public class ActionMovesListener implements ActionListener {  //implements KeySt
 
     private GridPanel gridPanel;
 
-    private NioClient nioClient;
+    private Client client;
 
-    private RspHandler handler;
-
-    public ActionMovesListener(Game2048Frame gf, Game2048GraphModel gModel, NioClient nc, RspHandler hand) {
+    public ActionMovesListener(Game2048Frame gf, Game2048GraphModel gModel, Client nc) {
         this.gridPanel = gf.getGridPanel();
         this.gameFrame = gf;
         this.model = gModel;
-        this.nioClient = nc;
-        this.handler = hand;
+        this.client = nc;
 
         setKeyBindings();
     }
@@ -60,7 +58,7 @@ public class ActionMovesListener implements ActionListener {  //implements KeySt
 
 
 //        gridPanel.getActionMap().put("up arrow", new UpArrowAction(this, model));
-        gridPanel.getActionMap().put("down arrow", new DownArrowAction(gameFrame,model,nioClient,handler));
+        gridPanel.getActionMap().put("down arrow", new DownArrowAction(gameFrame,model,client,client.getWorker()));
 //        gridPanel.getActionMap().put("left arrow", new LeftArrowAction(this, model));
 //        gridPanel.getActionMap().put("right arrow", new RightArrowAction(this, model));
 
@@ -71,9 +69,10 @@ public class ActionMovesListener implements ActionListener {  //implements KeySt
     @Override
     public void actionPerformed(ActionEvent event) {
         try {
-            System.out.println("je suis dans actionPerformed");
-            nioClient.send(NioClient.start(model.getGrid_width()), handler);
-
+            System.out.println("je suis dans actionPerformed du ActionMovesListener");
+//            w.send(NioClient.start(model.getGrid_width()), handler);
+//            client.getWorker().sendingData();
+            client.getWorker().start(client.getGridSize());
             model.setArrowActive(true);
             gameFrame.repaintGridPanel();
         }catch (Exception e) {

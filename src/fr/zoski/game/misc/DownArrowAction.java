@@ -1,5 +1,7 @@
 package fr.zoski.game.misc;
 
+import fr.zoski.Client.Client;
+import fr.zoski.Client.ClientWorker;
 import fr.zoski.game.view.Game2048Frame;
 import fr.zoski.game.view.Game2048GraphModel;
 import fr.zoski.rox.NioClient;
@@ -20,15 +22,15 @@ public class DownArrowAction extends AbstractAction {
 
     private Game2048GraphModel model;
 
-    private NioClient nioClient;
+    private Client client;
 
-    private RspHandler handler;
+    private ClientWorker worker;
 
-    public DownArrowAction(Game2048Frame frame, Game2048GraphModel model, NioClient nc, RspHandler hand) {
+    public DownArrowAction(Game2048Frame frame, Game2048GraphModel model, Client client, ClientWorker worker) {
         this.frame = frame;
         this.model = model;
-        this.nioClient = nc;
-        this.handler=hand;
+        this.client = client;
+        this.worker = worker;
     }
 
     @Override
@@ -38,7 +40,8 @@ public class DownArrowAction extends AbstractAction {
             //do a move and a send in nioclient
             try{
 //              use methods from NioClient to send the message to move to the server
-                nioClient.send(NioClient.move((short)2),handler);
+                client.send(worker.getDataEvent().socket,worker.move((short)2));
+//                worker.send
                 model.setArrowActive(false);
 //                frame.repaintGridPanel();
                 System.out.println("I'm in the actionPerformed of the DownArrowAction");

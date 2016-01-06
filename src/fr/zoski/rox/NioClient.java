@@ -59,7 +59,8 @@ public class NioClient implements Runnable {
         try {
             //System.out.println("Cell added at ["+x+"]["+y+"].");
 //            NioClient client = new NioClient(InetAddress.getByName("alberola.me"), 8080);
-            NioClient client = new NioClient(InetAddress.getByName("localhost"), 8080);
+//            NioClient client = new NioClient(InetAddress.getByName("localhost"), 8080);
+            NioClient client = new NioClient(InetAddress.getByName("10.3.4.74"), 8080);
             Thread t = new Thread(client);
             t.setDaemon(true);
             t.start();
@@ -67,8 +68,8 @@ public class NioClient implements Runnable {
             //initialize model, frame, listener
             gameGraphModel = new Game2048GraphModel(gridSize);
             gameFrame = new Game2048Frame(gameGraphModel);
-            ActionMovesListener listener = new ActionMovesListener(gameFrame, gameGraphModel,client,handler);
-            gameFrame.getControlPanel().getStartButton().addActionListener(listener);
+//            ActionMovesListener listener = new ActionMovesListener(gameFrame, gameGraphModel,client,handler);
+//            gameFrame.getControlPanel().getStartButton().addActionListener(listener);
 
             //Method start and move are just below
 //            client.send(start(4), handler);    //send to server //4 encore en dur
