@@ -8,6 +8,7 @@ import fr.zoski.game.view.GridPanel;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.nio.ByteBuffer;
 
 /**
  * Created by scrutch on 02/01/16.
@@ -66,17 +67,27 @@ public class ActionMovesListener implements ActionListener {  //implements KeySt
     @Override
     public void actionPerformed(ActionEvent event) {
         try {
-            System.out.println("je suis dans actionPerformed du ActionMovesListener");
-//            w.send(NioClient.start(model.getGrid_width()), handler);
-//            client.getWorker().sendingData();
-//            client.getWorker().start(client.getGridSize());
-            System.out.println("client socketchann"+client.getSocketChannel());
+
 //            client.send(client.getSocketChannel(),client.getWorker().startData(client.getGridSize()));
+
             model.setArrowActive(true);
+            client.send(startData(4),client.getWorker());
+//            client
             gameFrame.repaintGridPanel();
+            System.out.println("je suis dans actionPerformed du ActionMovesListener");
         }catch (Exception e) {
                 e.printStackTrace();
             }
     }
+    static public byte[] startData(int gridSize) {
+        System.out.println("startData");
+        ByteBuffer buffer = ByteBuffer.allocate(6);
+        buffer.putShort(((short) 0));
+        System.out.println(buffer.toString());
+        buffer.putInt(gridSize);
+        System.out.println(buffer.toString());
+        return buffer.array();
+    }
+
 
 }

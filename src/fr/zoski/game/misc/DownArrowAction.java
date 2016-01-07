@@ -41,7 +41,8 @@ public class DownArrowAction extends AbstractAction {
 //                worker.send
 //                model.setArrowActive(false);
 //                frame.repaintGridPanel();
-                System.out.println("bas");
+                System.out.println("bas"+ event.toString());
+
 
             }
             catch (Exception e) {

@@ -46,7 +46,7 @@ public class Client implements Runnable{
 
     private ClientWorker worker;
     private static int gridSize;
-    private SocketChannel socketChannel;
+    private SocketChannel socketChannel=null;
 
     public Client(InetAddress hostAddress, int port, ClientWorker worker) throws IOException {
         this.hostAddress = hostAddress;
@@ -57,17 +57,13 @@ public class Client implements Runnable{
 
     public static void main(String[] args) {
         try {
-            //System.out.println("Cell added at ["+x+"]["+y+"].");
-//            NioClient client = new NioClient(InetAddress.getByName("alberola.me"), 8080);
-//            NioClient client = new NioClient(InetAddress.getByName("localhost"), 8080);
             ClientWorker worker = new ClientWorker();
             new Thread(worker).start();
-//            client client = new client(InetAddress.getByName("10.3.4.74"), 8080,worker);
-            Client client = new Client(InetAddress.getByName("localhost"), 8080,worker);
+            Client client = new Client(InetAddress.getByName("10.3.4.106"), 8080,worker);
+//            Client client = new Client(InetAddress.getByName("localhost"), 8080,worker);
             Thread t = new Thread(client);
             t.setDaemon(true);
             t.start();
-//            RspHandler handler = new RspHandler();
             //initialize model, frame, listener
             gridSize = 4;
             gameGraphModel = new Game2048GraphModel(gridSize);
@@ -80,8 +76,9 @@ public class Client implements Runnable{
 //            client.send(start(4), handler);    //send to server //4 encore en dur
 //            client.send(move(((short) 1)), handler);    //move is sent to server
 
-
+//
             worker.waitForResponse();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -137,7 +134,7 @@ public class Client implements Runnable{
     }
 
     private void finishConnection(SelectionKey key) throws IOException {
-        SocketChannel socketChannel = (SocketChannel) key.channel();
+        socketChannel = (SocketChannel) key.channel();
 
         // Finish the connection. If the connection operation failed
         // this will raise an IOException.
@@ -156,13 +153,13 @@ public class Client implements Runnable{
 
     private SocketChannel initiateConnection() throws IOException {
 
-        // Create a non-blocking socket channel
-        SocketChannel socketChannel = SocketChannel.open();
-        socketChannel.configureBlocking(false);
+            // Create a non-blocking socket channel
+            socketChannel = SocketChannel.open();
+            socketChannel.configureBlocking(false);
 
-        // Kick off connection establishment
-        socketChannel.connect(new InetSocketAddress(this.hostAddress, this.port));
-        this.socketChannel = socketChannel;
+            // Kick off connection establishment
+            socketChannel.connect(new InetSocketAddress(this.hostAddress, this.port));
+            this.socketChannel = socketChannel;
 
         // Queue a channel registration since the caller is not the
         // selecting thread. As part of the registration we'll register
@@ -181,7 +178,7 @@ public class Client implements Runnable{
     }
 
     private void write(SelectionKey key) throws IOException {
-        SocketChannel socketChannel = (SocketChannel) key.channel();
+        socketChannel = (SocketChannel) key.channel();
         synchronized (this.pendingData) {
             List queue = (List) this.pendingData.get(socketChannel);
 
@@ -206,11 +203,10 @@ public class Client implements Runnable{
     }
 
     private void read(SelectionKey key) throws IOException {
-        SocketChannel socketChannel = (SocketChannel) key.channel();
+        socketChannel = (SocketChannel) key.channel();
 
         // Clear out our read buffer so it's ready for new data
         this.readBuffer.clear();
-        System.out.println("clear buffer: "+readBuffer);
 
         // Attempt to read off the channel
         int numRead;
@@ -249,25 +245,29 @@ public class Client implements Runnable{
         gameFrame.repaintGridPanel();
     }
 
-    public void send(SocketChannel socket, byte[] data) throws IOException{
-        // Start a new connection
-        SocketChannel socketChannel = this.initiateConnection();
-        this.workerMap.put(socketChannel,worker);
+    public void send( byte[] data,ClientWorker worker) throws IOException{
+        if(socketChannel==null) {
+            // Start a new connection
+            socketChannel = this.initiateConnection();
+            this.workerMap.put(socketChannel, worker);
+        }
+
         synchronized (this.pendingChanges) {
             // Indicate we want the interest ops set changed
-            this.pendingChanges.add(new ChangeRequest(socket, ChangeRequest.CHANGEOPS, SelectionKey.OP_WRITE));
+            this.pendingChanges.add(new ChangeRequest(socketChannel, ChangeRequest.CHANGEOPS, SelectionKey.OP_WRITE));
 
             // And queue the data we want written
             synchronized (this.pendingData) {
-                List queue = (List) this.pendingData.get(socket);
+                List queue = (List) this.pendingData.get(socketChannel);
                 if (queue == null) {
                     queue = new ArrayList();
-                    this.pendingData.put(socket, queue);
+                    this.pendingData.put(socketChannel, queue);
                 }
                 queue.add(ByteBuffer.wrap(data));
             }
         }
 
+        System.out.println("send is here");
         // Finally, wake up our selecting thread so it can make the required changes
         this.selector.wakeup();
     }

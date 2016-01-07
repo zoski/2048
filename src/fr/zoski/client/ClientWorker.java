@@ -43,7 +43,8 @@ public class ClientWorker implements Runnable {
             if (DEBUG)
                 System.out.println("Sending message... ");
             try {
-                dataEvent.client.send(dataEvent.socket, dataEvent.data);
+//                dataEvent.client.send(dataEvent.socket, dataEvent.data);
+                dataEvent.client.send(dataEvent.data,this);
             }catch(IOException e) {
             e.printStackTrace();
             }
@@ -52,7 +53,15 @@ public class ClientWorker implements Runnable {
     }
 
     //processData received
-    public void processData(Client client, SocketChannel socket, byte[] data, int count) {
+    public synchronized void processData(Client client, SocketChannel socket, byte[] data, int count) {
+
+        while (this.rsp == null) {
+            try {
+                this.wait();
+            } catch (InterruptedException e) {
+            }
+        }
+
         byte[] dataCopy = new byte[count];
 //        byte[] outMessage;    //the message to be send
         System.arraycopy(data, 0, dataCopy, 0, count);
@@ -92,14 +101,14 @@ public class ClientWorker implements Runnable {
 //    }
 
     //    public void actions
-    static public byte[] startData(int gridSize) {
-    ByteBuffer buffer = ByteBuffer.allocate(6);
-    buffer.putShort(((short) 0));
-//        System.out.println(buffer.toString());
-    buffer.putInt(gridSize);
-//        System.out.println(buffer.toString());
-    return buffer.array();
-}
+//    static public byte[] startData(int gridSize) {
+//    ByteBuffer buffer = ByteBuffer.allocate(6);
+//    buffer.putShort(((short) 0));
+////        System.out.println(buffer.toString());
+//    buffer.putInt(gridSize);
+////        System.out.println(buffer.toString());
+//    return buffer.array();
+//}
 //    public void start(){
 //
 //    }
