@@ -1,6 +1,6 @@
 package fr.zoski.client.view;
 
-import fr.zoski.game.model.Cell;
+import fr.zoski.shared.model.Cell;
 
 import java.awt.*;
 import java.util.Random;

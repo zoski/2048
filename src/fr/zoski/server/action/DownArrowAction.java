@@ -1,6 +1,6 @@
 package fr.zoski.server.action;
 
-import fr.zoski.game.model.Game2048Model;
+import fr.zoski.shared.model.Game2048Model;
 
 /**
  * Created by gael on 30/12/15.

@@ -1,4 +1,4 @@
-package fr.zoski.game.view;
+package fr.zoski.shared.view;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,4 +1,4 @@
-package fr.zoski.game.view;
+package fr.zoski.shared.view;
 
 import java.awt.*;
 import java.awt.font.FontRenderContext;

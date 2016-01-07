@@ -1,9 +1,9 @@
 package fr.zoski.server;
 
 
-import fr.zoski.game.model.Game2048Model;
-import fr.zoski.old.rox.ServerDataEvent;
+import fr.zoski.shared.model.Game2048Model;
 import fr.zoski.server.action.*;
+import fr.zoski.server.model.ServerDataEvent;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;

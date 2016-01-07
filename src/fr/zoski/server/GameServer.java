@@ -1,6 +1,7 @@
 package fr.zoski.server;
 
-import fr.zoski.old.rox.ChangeRequest;
+
+import fr.zoski.shared.ChangeRequest;
 
 import java.io.IOException;
 import java.net.InetAddress;

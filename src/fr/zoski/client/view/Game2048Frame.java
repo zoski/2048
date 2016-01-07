@@ -24,8 +24,6 @@ public class Game2048Frame {
     private Game2048GraphModel model;
     private GridPanel gridPanel;
 
-    private HighScoreProperties highScoreProperties;
-
     private JFrame frame;
 
     private ScorePanel scorePanel;

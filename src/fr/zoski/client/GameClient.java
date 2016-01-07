@@ -4,6 +4,7 @@ import fr.zoski.client.actions.StartGameAction;
 import fr.zoski.client.view.Game2048Frame;
 import fr.zoski.client.view.Game2048GraphModel;
 import fr.zoski.client.view.GridPanel;
+import fr.zoski.shared.ChangeRequest;
 
 import java.io.IOException;
 import java.net.InetAddress;

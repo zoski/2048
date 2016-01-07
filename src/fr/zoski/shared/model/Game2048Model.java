@@ -1,4 +1,4 @@
-package fr.zoski.game.model;
+package fr.zoski.shared.model;
 
 import java.awt.*;
 import java.nio.ByteBuffer;

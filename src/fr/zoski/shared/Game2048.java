@@ -1,11 +1,11 @@
-package fr.zoski.game;
+package fr.zoski.shared;
 
 /**
  * Created by gael on 30/12/15.
  */
 
-import fr.zoski.game.view.Game2048Frame;
-import fr.zoski.game.view.Game2048GraphModel;
+import fr.zoski.shared.view.Game2048Frame;
+import fr.zoski.shared.view.Game2048GraphModel;
 
 import javax.swing.*;
 
