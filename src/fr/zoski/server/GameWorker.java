@@ -2,6 +2,7 @@ package fr.zoski.server;
 
 
 import fr.zoski.game.model.Game2048Model;
+import fr.zoski.rox.ServerDataEvent;
 import fr.zoski.server.action.*;
 
 import java.nio.ByteBuffer;
@@ -20,38 +21,35 @@ public class GameWorker implements Runnable {
     private Map<Integer, Game2048Model> games = new HashMap<>();
 
     public void processData(GameServer server, SocketChannel socket, byte[] data, int count) {
-        Game2048Model currentGame;
+        Game2048Model currentGame = null;
         byte[] dataCopy = new byte[count];
 
         //@TODO Ask for the grid Game size at first connection
         int gridSize = 4;
 
-        byte[] outMessage;    //the message to be send
-        Integer clientId;
-        boolean askId = false;
+        byte[] outMessage;          //the message to be send
+        Integer clientId;           //current clientId
+        boolean askId = false;      //identify if the client as an id or not
         System.arraycopy(data, 0, dataCopy, 0, count);
         ByteBuffer bb = ByteBuffer.wrap(dataCopy);  // Wrapping the byte[] within a ByteBuffer
 
         /** Starting parsing the received message from here */
-
         // message id (type of action)
         short id = bb.getShort();
         System.out.println("Id read : " + id);
 
-        clientId = bb.getInt();
-        System.out.println("Client already know. ClientID is : " + clientId);
-        currentGame = games.get(clientId);
-
-
+        //clientId = bb.getInt();
+        //System.out.println("Client already know. ClientID is : " + clientId);
+        //currentGame = games.get(clientId);
         // Choosing the good action depending the id
         switch (id) {
-            case 0: // START OR RESTART
+            case 0: // CLIENT KNOWN -> START OR RESTART
                 int size = bb.getInt();
                 if (DEBUG)
                     System.out.println("Asked for a new Grid size : " + size);
 
                 currentGame = new Game2048Model(gridSize);
-                clientId = games.size();
+                clientId = bb.getInt();
                 games.put(clientId, currentGame);
 
                 StartGameAction start = new StartGameAction(currentGame);
@@ -59,7 +57,9 @@ public class GameWorker implements Runnable {
                 askId = true;
                 break;
 
-            case 1: // DIRECTION INPUT
+            case 1: // CLIENT KNOWN -> DIRECTION INPUT
+                clientId = bb.getInt();
+                currentGame = games.get(clientId);
                 short dir = bb.getShort();  //direction received
                 if (DEBUG)
                     System.out.println("Direction received : " + dir);
@@ -73,7 +73,6 @@ public class GameWorker implements Runnable {
 
                         if (DEBUG)
                             System.out.println("In the TOP case : " + queue.toString());
-
                         break;
 
                     case 2: // DOWN
@@ -105,6 +104,12 @@ public class GameWorker implements Runnable {
                 }   // end switch case direction
                 break;
 
+            case 9: //hello
+                System.out.println("A new client appeared...");
+                askId = true;
+
+                break;
+
             default:
                 if (DEBUG)
                     System.out.println("Something when wrong. Message received \n\t" +
@@ -116,10 +121,11 @@ public class GameWorker implements Runnable {
         if (askId) {     // IDID IDCLIENT
             ByteBuffer out = ByteBuffer.allocate(2 + 4);
             out.putShort((short) 10);
-            out.putInt(clientId);
+            out.putInt(games.size());
+
             outMessage = out.array();
 
-        } else {
+        } else {    // KNOWN CLIENT
             outMessage = currentGame.getGrid();
         }
 

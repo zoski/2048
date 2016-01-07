@@ -1,6 +1,6 @@
 package fr.zoski.server;
 
-import fr.zoski.share.ChangeRequest;
+import fr.zoski.rox.ChangeRequest;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -49,7 +49,7 @@ public class GameServer implements Runnable {
             GameWorker worker = new GameWorker();
             GameServer server = new GameServer(null, 8080, worker);
             new Thread(worker).start();
-            new Thread(server).start();
+            new Thread().start();
             System.out.println("Server started on port 8080 ");
 
         } catch (IOException e) {
