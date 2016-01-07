@@ -1,6 +1,7 @@
 package fr.zoski.server;
 
 
+import com.sun.org.apache.xml.internal.serializer.utils.SystemIDResolver;
 import fr.zoski.game.model.Game2048Model;
 import fr.zoski.rox.ServerDataEvent;
 import fr.zoski.server.action.*;
@@ -36,31 +37,34 @@ public class GameWorker implements Runnable {
         /** Starting parsing the received message from here */
         // message id (type of action)
         short id = bb.getShort();
-        System.out.println("Id read : " + id);
+        System.out.println("\n\n\n************ NEW MESSAGE RECEIVED ************\n" +
+                "Message ID read : " + id);
 
-        //clientId = bb.getInt();
-        //System.out.println("Client already know. ClientID is : " + clientId);
-        //currentGame = games.get(clientId);
-        // Choosing the good action depending the id
         switch (id) {
             case 0: // CLIENT KNOWN -> START OR RESTART
+                clientId = bb.getInt();
                 int size = bb.getInt();
                 if (DEBUG)
-                    System.out.println("Asked for a new Grid size : " + size);
+                    System.out.println("Client : " + clientId +
+                            " asked for a new Grid size : " + size);
 
                 currentGame = new Game2048Model(gridSize);
-                clientId = bb.getInt();
+
                 games.put(clientId, currentGame);
 
                 StartGameAction start = new StartGameAction(currentGame);
                 start.actionPerformed();
-                askId = true;
+
                 break;
 
             case 1: // CLIENT KNOWN -> DIRECTION INPUT
                 clientId = bb.getInt();
                 currentGame = games.get(clientId);
+                System.out.println("Client ID = " + clientId + " - currentGame = " + currentGame);
+
+
                 short dir = bb.getShort();  //direction received
+
                 if (DEBUG)
                     System.out.println("Direction received : " + dir);
 
@@ -122,8 +126,9 @@ public class GameWorker implements Runnable {
             ByteBuffer out = ByteBuffer.allocate(2 + 4);
             out.putShort((short) 10);
             out.putInt(games.size());
-
             outMessage = out.array();
+            System.out.println("Giving client id : " + games.size());
+
 
         } else {    // KNOWN CLIENT
             outMessage = currentGame.getGrid();
@@ -152,11 +157,10 @@ public class GameWorker implements Runnable {
                 dataEvent = (ServerDataEvent) queue.remove(0);
             }
 
-            if (DEBUG)
-                System.out.println("Sending message : " + dataEvent.data.toString());
-
             dataEvent.server.send(dataEvent.socket, dataEvent.data);
 
+            if (DEBUG)
+                System.out.println("Sending message : " + dataEvent.data.toString());
 
         }
     }

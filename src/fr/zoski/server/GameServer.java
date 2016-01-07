@@ -49,7 +49,7 @@ public class GameServer implements Runnable {
             GameWorker worker = new GameWorker();
             GameServer server = new GameServer(null, 8080, worker);
             new Thread(worker).start();
-            new Thread().start();
+            new Thread(server).start();
             System.out.println("Server started on port 8080 ");
 
         } catch (IOException e) {
@@ -77,6 +77,7 @@ public class GameServer implements Runnable {
             }
         }
 
+        System.out.println("Message send");
         // Finally, wake up our selecting thread so it can make the required changes
         this.selector.wakeup();
     }
