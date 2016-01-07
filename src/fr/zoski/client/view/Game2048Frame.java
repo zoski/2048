@@ -6,7 +6,6 @@ import fr.zoski.client.actions.DownArrowAction;
 import fr.zoski.client.actions.LeftArrowAction;
 import fr.zoski.client.actions.RightArrowAction;
 import fr.zoski.client.actions.UpArrowAction;
-import fr.zoski.game.misc.HighScoreProperties;
 
 import javax.swing.*;
 import java.awt.*;

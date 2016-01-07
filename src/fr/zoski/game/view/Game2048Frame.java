@@ -1,8 +1,6 @@
 package fr.zoski.game.view;
 
 
-import fr.zoski.game.misc.HighScoreProperties;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -17,16 +15,12 @@ public class Game2048Frame {
     private Game2048GraphModel model;
     private GridPanel gridPanel;
 
-    private HighScoreProperties highScoreProperties;
-
     private JFrame frame;
 
     private ScorePanel scorePanel;
 
     public Game2048Frame(Game2048GraphModel model) {
         this.model = model;
-//        this.highScoreProperties = new HighScoreProperties(model);
-//        this.highScoreProperties.loadProperties();
         createPartControl();
     }
 
