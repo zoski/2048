@@ -1,4 +1,4 @@
-package fr.zoski.rox;
+package fr.zoski.client;
 
 import java.nio.channels.SocketChannel;
 

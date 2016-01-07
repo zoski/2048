@@ -1,4 +1,4 @@
-package fr.zoski.game.view;
+package fr.zoski.client.view;
 
 import fr.zoski.game.model.Cell;
 
@@ -57,6 +57,17 @@ public class Game2048GraphModel {
         currentCell = 0;
     }
 
+    private String displayAddCell(int x, int y) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Cell added at [");
+        builder.append(x);
+        builder.append("][");
+        builder.append(y);
+        builder.append("].");
+
+        return builder.toString();
+    }
+
     private void updateScore(int value, int cellValue) {
         currentScore += value;
         currentCell = (cellValue > currentCell) ?
@@ -91,13 +102,10 @@ public class Game2048GraphModel {
         return currentCell;
     }
 
-    public boolean isArrowActive() {
-        return arrowActive;
-    }
+//    public void setGrid(Cell[][] cells){
+//        this.grid = cells;
+//    }
 
-    public void setArrowActive(boolean arrowActive) {
-        this.arrowActive = arrowActive;
-    }
 
     public Dimension getPreferredSize() {
         int width = grid_width * Cell.getCellWidth() +
@@ -117,9 +125,21 @@ public class Game2048GraphModel {
         }
     }
 
-    public int getGrid_width() {
+    public boolean isArrowActive() {
+        // TODO Auto-generated method stub
+        return arrowActive;
+    }
+
+    public void setArrowActive(boolean b) {
+        // TODO Auto-generated method stub
+        this.arrowActive = b;
+    }
+
+    public int getGridWidth() {
         return grid_width;
     }
 
-
+    public void setGridWidth(int size) {
+        this.grid_width = size;
+    }
 }

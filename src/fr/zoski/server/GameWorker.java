@@ -1,9 +1,8 @@
 package fr.zoski.server;
 
 
-import com.sun.org.apache.xml.internal.serializer.utils.SystemIDResolver;
 import fr.zoski.game.model.Game2048Model;
-import fr.zoski.rox.ServerDataEvent;
+import fr.zoski.old.rox.ServerDataEvent;
 import fr.zoski.server.action.*;
 
 import java.nio.ByteBuffer;
@@ -37,7 +36,7 @@ public class GameWorker implements Runnable {
         /** Starting parsing the received message from here */
         // message id (type of action)
         short id = bb.getShort();
-        System.out.println("\n\n\n************ NEW MESSAGE RECEIVED ************\n" +
+        System.out.println("************ NEW MESSAGE RECEIVED ************\n" +
                 "Message ID read : " + id);
 
         switch (id) {
@@ -58,8 +57,10 @@ public class GameWorker implements Runnable {
                 break;
 
             case 1: // CLIENT KNOWN -> DIRECTION INPUT
+
                 clientId = bb.getInt();
                 currentGame = games.get(clientId);
+                //if(!currentGame.isGameOver()) {
                 System.out.println("Client ID = " + clientId + " - currentGame = " + currentGame);
 
 
@@ -108,6 +109,7 @@ public class GameWorker implements Runnable {
                 }   // end switch case direction
                 break;
 
+
             case 9: //hello
                 System.out.println("A new client appeared...");
                 askId = true;
@@ -121,7 +123,7 @@ public class GameWorker implements Runnable {
                 break;
         }   //end switch case
 
-        /** Setting the message to be send */
+        /** Setting up the message to be send */
         if (askId) {     // IDID IDCLIENT
             ByteBuffer out = ByteBuffer.allocate(2 + 4);
             out.putShort((short) 10);
@@ -131,7 +133,15 @@ public class GameWorker implements Runnable {
 
 
         } else {    // KNOWN CLIENT
-            outMessage = currentGame.getGrid();
+            if (!currentGame.isGameOver()) {
+                outMessage = currentGame.getGrid();
+            } else {
+                System.out.println("The game is over the client lost");
+                ByteBuffer out = ByteBuffer.allocate(2);
+                out.putShort((short) 5);
+                outMessage = out.array();
+            }
+
         }
 
         synchronized (queue) {
@@ -160,7 +170,7 @@ public class GameWorker implements Runnable {
             dataEvent.server.send(dataEvent.socket, dataEvent.data);
 
             if (DEBUG)
-                System.out.println("Sending message : " + dataEvent.data.toString());
+                System.out.println("Sending message : " + dataEvent.data.toString() + "\n\n\n");
 
         }
     }

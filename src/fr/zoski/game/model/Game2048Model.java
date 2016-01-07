@@ -370,10 +370,11 @@ public class Game2048Model {
 
     /**
      * Format the grid to be ready to be send to the client
-     *  Format :
-     *      (Short)        ID of the message : here 3
-     *      (Int)          _size_ of the grid
-     *      size²(Short)      Grid content
+     * Format :
+     * (Short)        ID of the message : here 3
+     * (Int)          _size_ of the grid
+     * size²(Short)      Grid content
+     *
      * @return byte[] to be send by the server
      */
     public byte[] getGrid() {
@@ -424,7 +425,6 @@ public class Game2048Model {
         return gameOver.array();
     }
 
-
     public void draw(Graphics g) {
         g.setColor(Color.DARK_GRAY);
         Dimension d = getPreferredSize();
@@ -436,5 +436,4 @@ public class Game2048Model {
             }
         }
     }
-
 }

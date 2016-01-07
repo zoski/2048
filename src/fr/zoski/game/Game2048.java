@@ -4,11 +4,10 @@ package fr.zoski.game;
  * Created by gael on 30/12/15.
  */
 
-import fr.zoski.game.model.Game2048Model;
 import fr.zoski.game.view.Game2048Frame;
 import fr.zoski.game.view.Game2048GraphModel;
 
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 public class Game2048 implements Runnable {
 

@@ -1,7 +1,6 @@
 package fr.zoski.game.view;
 
 
-import fr.zoski.game.misc.DownArrowAction;
 import fr.zoski.game.misc.HighScoreProperties;
 
 import javax.swing.*;
@@ -108,11 +107,11 @@ public class Game2048Frame {
         scorePanel.updatePartControl();
     }
 
-    public GridPanel getGridPanel(){
+    public GridPanel getGridPanel() {
         return gridPanel;
     }
 
-    public ControlPanel getControlPanel(){
+    public ControlPanel getControlPanel() {
         return controlPanel;
     }
 

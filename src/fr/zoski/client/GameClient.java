@@ -1,11 +1,9 @@
-package fr.zoski.rox;
+package fr.zoski.client;
 
-import fr.zoski.game.Game2048;
-import fr.zoski.game.misc.ActionMovesListener;
-import fr.zoski.game.model.Cell;
-import fr.zoski.game.view.Game2048Frame;
-import fr.zoski.game.view.Game2048GraphModel;
-import fr.zoski.game.view.GridPanel;
+import fr.zoski.client.actions.StartGameAction;
+import fr.zoski.client.view.Game2048Frame;
+import fr.zoski.client.view.Game2048GraphModel;
+import fr.zoski.client.view.GridPanel;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -17,7 +15,7 @@ import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.SelectorProvider;
 import java.util.*;
 
-public class NioClient implements Runnable {
+public class GameClient implements Runnable {
 
     //gridSize
     private static int gridSize = 4;
@@ -25,31 +23,26 @@ public class NioClient implements Runnable {
     //Game2048Frame, to print it on screen
     private static Game2048GraphModel gameGraphModel;
     private static Game2048Frame gameFrame;
-    private static ActionMovesListener actionMovesListener;
-
+    //Handles sending/receiving data from the server
+    private static RspHandler handler;
+    //ID client:
+    private static int idClient;
+    private GridPanel gameGridPanel;
     // The host:port combination to connect to
     private InetAddress hostAddress;
     private int port;
-
     // The selector we'll be monitoring
     private Selector selector;
-
     // The buffer into which we'll read data when it's available
     private ByteBuffer readBuffer = ByteBuffer.allocate(8192);
-
     // A list of PendingChange instances
     private List pendingChanges = new LinkedList();
-
     // Maps a SocketChannel to a list of ByteBuffer instances
     private Map pendingData = new HashMap();
-
     // Maps a SocketChannel to a RspHandler
     private Map rspHandlers = Collections.synchronizedMap(new HashMap());
 
-    //SocketChannel, need to keep the connection
-    private SocketChannel socketChannel = null;
-
-    public NioClient(InetAddress hostAddress, int port) throws IOException {
+    public GameClient(InetAddress hostAddress, int port) throws IOException {
         this.hostAddress = hostAddress;
         this.port = port;
         this.selector = this.initSelector();
@@ -57,24 +50,21 @@ public class NioClient implements Runnable {
 
     public static void main(String[] args) {
         try {
-            //System.out.println("Cell added at ["+x+"]["+y+"].");
-//            NioClient client = new NioClient(InetAddress.getByName("alberola.me"), 8080);
-            NioClient client = new NioClient(InetAddress.getByName("localhost"), 8080);
+//            GameClient client = new GameClient(InetAddress.getByName("alberola.me"), 8080);
+            GameClient client = new GameClient(InetAddress.getByName("localhost"), 8080);
+            //GameClient client = new GameClient(InetAddress.getByName("localhost"), 8080);
             Thread t = new Thread(client);
             t.setDaemon(true);
             t.start();
-            RspHandler handler = new RspHandler();
-            //initialize model, frame, listener
+            handler = new RspHandler();
             gameGraphModel = new Game2048GraphModel(gridSize);
             gameFrame = new Game2048Frame(gameGraphModel);
-            ActionMovesListener listener = new ActionMovesListener(gameFrame, gameGraphModel,client,handler);
+            StartGameAction listener = new StartGameAction(gameGraphModel, client, handler);
             gameFrame.getControlPanel().getStartButton().addActionListener(listener);
+            gameFrame.setKeyBindings(client);
 
-            //Method start and move are just below
-//            client.send(start(4), handler);    //send to server //4 encore en dur
-//            client.send(move(((short) 1)), handler);    //move is sent to server
-
-
+            client.send(hello(), handler);
+            System.out.println("post-hello");
             handler.waitForResponse();
         } catch (Exception e) {
             e.printStackTrace();
@@ -83,36 +73,46 @@ public class NioClient implements Runnable {
 
     //method start with id=0 (short) and the int is for the size of the grid
     static public byte[] start(int gridSize) {
-        ByteBuffer buffer = ByteBuffer.allocate(6);
+        ByteBuffer buffer = ByteBuffer.allocate(2 + 4 + 4);
         buffer.putShort(((short) 0));
 //        System.out.println(buffer.toString());
+        buffer.putInt(idClient);
         buffer.putInt(gridSize);
 //        System.out.println(buffer.toString());
         return buffer.array();
     }
 
     static public byte[] move(short direction) {
-        ByteBuffer buffer = ByteBuffer.allocate(4);
+        ByteBuffer buffer = ByteBuffer.allocate(2 + 4 + 2);
         buffer.putShort(((short) 1));
 //        System.out.println(buffer.toString());
+        buffer.putInt(idClient);
         buffer.putShort(direction);
 //        System.out.println(buffer.toString());
         return buffer.array();
     }
 
+    static public byte[] hello() {
+        ByteBuffer buffer = ByteBuffer.allocate(2);
+        buffer.putShort((short) 9);
+        System.out.println(buffer.toString());
+        return buffer.array();
+    }
+
+
     public void send(byte[] data, RspHandler handler) throws IOException {
         // Start a new connection
-        SocketChannel socket = this.initiateConnection();
+        SocketChannel socketChannel = this.initiateConnection();
 
         // Register the response handler
-        this.rspHandlers.put(socket, handler);
+        this.rspHandlers.put(socketChannel, handler);
 
         // And queue the data we want written
         synchronized (this.pendingData) {
-            List queue = (List) this.pendingData.get(socket);
+            List queue = (List) this.pendingData.get(socketChannel);
             if (queue == null) {
                 queue = new ArrayList();
-                this.pendingData.put(socket, queue);
+                this.pendingData.put(socketChannel, queue);
             }
             queue.add(ByteBuffer.wrap(data));
         }
@@ -149,7 +149,7 @@ public class NioClient implements Runnable {
                 Iterator selectedKeys = this.selector.selectedKeys().iterator();
                 while (selectedKeys.hasNext()) {
                     SelectionKey key = (SelectionKey) selectedKeys.next();
-//					selectedKeys.remove();
+                    selectedKeys.remove();
 
                     if (!key.isValid()) {
                         continue;
@@ -175,7 +175,6 @@ public class NioClient implements Runnable {
 
         // Clear out our read buffer so it's ready for new data
         this.readBuffer.clear();
-        System.out.println("clear buffer: "+readBuffer);
 
         // Attempt to read off the channel
         int numRead;
@@ -186,15 +185,16 @@ public class NioClient implements Runnable {
             // the selection key and close the channel.
             key.cancel();
             socketChannel.close();
+            System.out.println("exception");
             return;
         }
 
         if (numRead == -1) {
             // Remote entity shut the socket down cleanly. Do the
             // same from our end and cancel the channel.
-//			key.channel().close();
-//			key.cancel();
-            System.out.println("numRead = "+numRead);
+            key.channel().close();
+            key.cancel();
+            System.out.println("problem with numRead    numRead = " + numRead);
             return;
         }
 
@@ -207,30 +207,10 @@ public class NioClient implements Runnable {
         // to the client
         byte[] dataCopy = new byte[numRead];
         System.arraycopy(data, 0, dataCopy, 0, numRead);
-
-        System.out.println("numRead: "+numRead);
-        System.out.println("data length:  "+data.length);
-        System.out.println("data: "+data + "data[0]" +data[0]);
-
         // Look up the handler for this channel
-//        RspHandler handler = (RspHandler) this.rspHandlers.get(socketChannel);
-        // Wrapping the byte[] whithin a ByteBuffer
-        ByteBuffer bb = ByteBuffer.wrap(dataCopy);
-
-        short id = bb.getShort();
-        System.out.println("Id read : " + id);
-
-        // Chosing the good action depending the id
-        if(id == 3){
-            int size = bb.getInt();
-            short[] grid = new short[size * size];
-            for (int k = 0; k < (int) size * size; k++) {
-                grid[k] = bb.getShort();
-//                System.out.println(grid[k]);
-            }
-//            System.out.println("Index 3 wanted): " + id + " ; size : " + size );
-            setCells(grid);
-        }
+        RspHandler handler = (RspHandler) this.rspHandlers.get(socketChannel);
+        //The handler handles the response
+        handler.handleResponse(dataCopy, gameFrame, this);
     }
 
     private void write(SelectionKey key) throws IOException {
@@ -268,7 +248,7 @@ public class NioClient implements Runnable {
             socketChannel.finishConnect();
         } catch (IOException e) {
             // Cancel the channel's registration with our selector
-//            System.out.println(e);
+            System.out.println(e);
             key.cancel();
             return;
         }
@@ -277,16 +257,17 @@ public class NioClient implements Runnable {
         key.interestOps(SelectionKey.OP_WRITE);
     }
 
+    //Methods for the communication with the server
+
     private SocketChannel initiateConnection() throws IOException {
 
-        if(socketChannel==null) {
-            // Create a non-blocking socket channel
-            socketChannel = SocketChannel.open();
-            socketChannel.configureBlocking(false);
+        // Create a non-blocking socket channel
+        SocketChannel socketChannel = SocketChannel.open();
+        socketChannel.configureBlocking(false);
 
-            // Kick off connection establishment
-            socketChannel.connect(new InetSocketAddress(this.hostAddress, this.port));
-        }
+        // Kick off connection establishment
+        socketChannel.connect(new InetSocketAddress(this.hostAddress, this.port));
+
         // Queue a channel registration since the caller is not the
         // selecting thread. As part of the registration we'll register
         // an interest in connection events. These are raised when a channel
@@ -303,36 +284,21 @@ public class NioClient implements Runnable {
         return SelectorProvider.provider().openSelector();
     }
 
-    public void setGridSize(int size){
+    public int getGridSize() {
+        return gridSize;
+    }
+
+    public void setGridSize(int size) {
         gridSize = size;
     }
 
-    //with the list of short (cell values), create Cell[][] to have a grid
-    private Cell[][] getCells(short[] cellGrid){
-        Cell[][] cells = new Cell[gridSize][gridSize];
-        for(int k=0;k<gridSize;k++){
-            for(int x=0; x<gridSize;x++){
-                for (int y=0; y<gridSize;y++){
-                    Cell cell = new Cell(cellGrid[k]);
-                    k++;
-                    cell.setCellLocation(x, y);
-                    cells[x][y] = cell;
-//                    System.out.println(cell.getValue());
-                }
-            }
-        }
-        return cells;
+    public RspHandler getHandler() {
+        return handler;
     }
 
-    private void setCells(short[] cellGrid) {
-        int i = 0;
-		for (int x = 0; x < gridSize; x++) {
-            for (int y = 0; y < gridSize; y++) {
-            	this.gameGraphModel.getCell(x, y).setValue(cellGrid[i]);
-//                System.out.println(cellGrid[i]);
-            	i++;
-            }
-		}
-        gameFrame.repaintGridPanel();
+    public void setID(int id) {
+        idClient = id;
     }
+
+
 }

@@ -3,13 +3,12 @@ package fr.zoski.game.misc;
 import fr.zoski.game.view.Game2048Frame;
 import fr.zoski.game.view.Game2048GraphModel;
 import fr.zoski.game.view.GridPanel;
-import fr.zoski.rox.NioClient;
-import fr.zoski.rox.RspHandler;
+import fr.zoski.old.rox.NioClient;
+import fr.zoski.old.rox.RspHandler;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 
 /**
  * Created by scrutch on 02/01/16.
@@ -56,16 +55,16 @@ public class ActionMovesListener implements ActionListener {  //implements KeySt
         inputMap.put(KeyStroke.getKeyStroke("LEFT"), "left arrow");
         inputMap.put(KeyStroke.getKeyStroke("RIGHT"), "right arrow");
 
-        System.out.println("1st"+gridPanel.getActionMap());
+        System.out.println("1st" + gridPanel.getActionMap());
 
 
 //        gridPanel.getActionMap().put("up arrow", new UpArrowAction(this, model));
-        gridPanel.getActionMap().put("down arrow", new DownArrowAction(gameFrame,model,nioClient,handler));
+        gridPanel.getActionMap().put("down arrow", new DownArrowAction(gameFrame, model, nioClient, handler));
 //        gridPanel.getActionMap().put("left arrow", new LeftArrowAction(this, model));
 //        gridPanel.getActionMap().put("right arrow", new RightArrowAction(this, model));
 
-        System.out.println("2"+gridPanel.getActionMap());
-        System.out.println("contenu"+gridPanel.getActionMap().get("down arrow"));
+        System.out.println("2" + gridPanel.getActionMap());
+        System.out.println("contenu" + gridPanel.getActionMap().get("down arrow"));
     }
 
     @Override
@@ -76,12 +75,11 @@ public class ActionMovesListener implements ActionListener {  //implements KeySt
 
             model.setArrowActive(true);
             gameFrame.repaintGridPanel();
-        }catch (Exception e) {
-                e.printStackTrace();
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
-
 
 
 }

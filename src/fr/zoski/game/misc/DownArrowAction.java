@@ -2,12 +2,11 @@ package fr.zoski.game.misc;
 
 import fr.zoski.game.view.Game2048Frame;
 import fr.zoski.game.view.Game2048GraphModel;
-import fr.zoski.rox.NioClient;
-import fr.zoski.rox.RspHandler;
+import fr.zoski.old.rox.NioClient;
+import fr.zoski.old.rox.RspHandler;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.nio.ByteBuffer;
 
 /**
  * Created by scrutch on 04/01/16.
@@ -28,7 +27,11 @@ public class DownArrowAction extends AbstractAction {
         this.frame = frame;
         this.model = model;
         this.nioClient = nc;
-        this.handler=hand;
+        this.handler = hand;
+    }
+
+    public static short getDirection() {
+        return direction;
     }
 
     @Override
@@ -36,23 +39,18 @@ public class DownArrowAction extends AbstractAction {
         if (model.isArrowActive()) {
             //Send to server the down action
             //do a move and a send in nioclient
-            try{
-//              use methods from NioClient to send the message to move to the server
-                nioClient.send(NioClient.move((short)2),handler);
+            try {
+//              use methods from GameClient to send the message to move to the server
+                nioClient.send(NioClient.move((short) 2), handler);
                 model.setArrowActive(false);
 //                frame.repaintGridPanel();
                 System.out.println("I'm in the actionPerformed of the DownArrowAction");
 
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
         }
-    }
-
-    public static short getDirection(){
-        return direction;
     }
 
 

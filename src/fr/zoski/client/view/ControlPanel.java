@@ -1,4 +1,4 @@
-package fr.zoski.game.view;
+package fr.zoski.client.view;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,7 +33,7 @@ public class ControlPanel {
 
         int gridy = 0;
 
-        startGameButton = new JButton("Start Game");
+        startGameButton = startGameButton = new JButton("Start Game");
 //        startGameButton.addActionListener(listener);
         addComponent(panel, startGameButton, 0, gridy++, 1, 1,
                 regularInsets, GridBagConstraints.LINE_START,
@@ -56,5 +56,4 @@ public class ControlPanel {
     public JButton getStartButton() {
         return startGameButton;
     }
-
 }
