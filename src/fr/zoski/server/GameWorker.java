@@ -2,7 +2,6 @@ package fr.zoski.server;
 
 
 import fr.zoski.game.model.Game2048Model;
-import fr.zoski.rox.ServerDataEvent;
 import fr.zoski.server.action.*;
 
 import java.nio.ByteBuffer;
@@ -18,7 +17,7 @@ public class GameWorker implements Runnable {
 
 
     private List queue = new LinkedList();
-    private Map<SocketChannel, Game2048Model> games = new HashMap<>();
+    private Map<Integer, Game2048Model> games = new HashMap<>();
 
     public void processData(GameServer server, SocketChannel socket, byte[] data, int count) {
         Game2048Model currentGame;
@@ -28,32 +27,10 @@ public class GameWorker implements Runnable {
         int gridSize = 4;
 
         byte[] outMessage;    //the message to be send
-
+        Integer clientId;
+        boolean askId = false;
         System.arraycopy(data, 0, dataCopy, 0, count);
         ByteBuffer bb = ByteBuffer.wrap(dataCopy);  // Wrapping the byte[] within a ByteBuffer
-
-
-
-        /** Testing if the client is already recorded */
-        if (games.containsKey(socket)) {
-            // the client is already in the map
-            if (DEBUG)
-                System.out.println("Client already know...");
-
-            currentGame = games.get(socket);
-
-        } else {
-            // it's a new client -> let's start a new game
-            if (DEBUG)
-                System.out.println("New client creating a new game and saving it...");
-
-            currentGame = new Game2048Model(gridSize);
-            games.put(socket, currentGame);
-            // doing the grid initialization
-            StartGameAction start = new StartGameAction(currentGame);
-            start.actionPerformed();
-        }
-
 
         /** Starting parsing the received message from here */
 
@@ -61,14 +38,25 @@ public class GameWorker implements Runnable {
         short id = bb.getShort();
         System.out.println("Id read : " + id);
 
+        clientId = bb.getInt();
+        System.out.println("Client already know. ClientID is : " + clientId);
+        currentGame = games.get(clientId);
+
+
         // Choosing the good action depending the id
         switch (id) {
             case 0: // START OR RESTART
                 int size = bb.getInt();
                 if (DEBUG)
                     System.out.println("Asked for a new Grid size : " + size);
+
+                currentGame = new Game2048Model(gridSize);
+                clientId = games.size();
+                games.put(clientId, currentGame);
+
                 StartGameAction start = new StartGameAction(currentGame);
                 start.actionPerformed();
+                askId = true;
                 break;
 
             case 1: // DIRECTION INPUT
@@ -125,12 +113,16 @@ public class GameWorker implements Runnable {
         }   //end switch case
 
         /** Setting the message to be send */
-        outMessage = currentGame.getGrid();
+        if (askId) {     // IDID IDCLIENT
+            ByteBuffer out = ByteBuffer.allocate(2 + 4);
+            out.putShort((short) 10);
+            out.putInt(clientId);
+            outMessage = out.array();
 
-        // Decoding and displaying the received data
-        //System.out.println("Data received : " + Charset.defaultCharset().decode(bb));
+        } else {
+            outMessage = currentGame.getGrid();
+        }
 
-        // Adding the received data to the queue
         synchronized (queue) {
             queue.add(new ServerDataEvent(server, socket, outMessage));
             queue.notify();
@@ -152,20 +144,15 @@ public class GameWorker implements Runnable {
                     }
                 }
                 dataEvent = (ServerDataEvent) queue.remove(0);
-                if (DEBUG)
-                    System.out.println("Cleaning the first dataEvent" + dataEvent + " of the queue");
             }
 
-            // Return to sender
-            //dataEvent.server.send(dataEvent.socket, dataEvent.server.grid(10));
             if (DEBUG)
-                System.out.println("Sending message... ");
+                System.out.println("Sending message : " + dataEvent.data.toString());
 
             dataEvent.server.send(dataEvent.socket, dataEvent.data);
 
 
         }
     }
-
 
 }
