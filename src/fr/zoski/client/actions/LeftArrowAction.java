@@ -29,7 +29,6 @@ public class LeftArrowAction extends AbstractAction {
             try {
                 client.send(client.move(LEFT), client.getHandler());
                 client.getHandler().waitForResponse();
-                //repaint?
                 System.out.println("left");
             } catch (IOException e1) {
                 // TODO Auto-generated catch block

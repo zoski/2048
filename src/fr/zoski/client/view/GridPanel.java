@@ -27,9 +27,5 @@ public class GridPanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         model.draw(g);
-
-//        if (model.isGameOver()) {
-//            g.drawImage(image.getImage(), 0, 0, null);
-//        }
     }
 }

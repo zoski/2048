@@ -29,10 +29,8 @@ public class StartGameAction implements ActionListener {
         model.initializeGrid();
         model.setArrowActive(true);
         try {
-
             client.send(client.start(model.getGridWidth()), handler);
             client.getHandler().waitForResponse();
-            //cannot really restart as a new game is saved?
         } catch (IOException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();

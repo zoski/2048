@@ -16,16 +16,12 @@ import java.io.IOException;
 public class DownArrowAction extends AbstractAction {
 
     private static short DOWN = 2;
-    private static ClientWorker handler;
     private static GameClient client;
     private Game2048GraphModel model;
-    private Game2048Frame frame;
 
     public DownArrowAction(Game2048Frame frame, Game2048GraphModel model, GameClient client) {
         this.model = model;
-        this.frame = frame;
-        DownArrowAction.client = client;
-        DownArrowAction.handler = client.getHandler();
+        this.client = client;
     }
 
     @Override
@@ -35,7 +31,6 @@ public class DownArrowAction extends AbstractAction {
             try {
                 client.send(client.move(DOWN), client.getHandler());
                 client.getHandler().waitForResponse();
-                //repaint?
                 System.out.println("down");
             } catch (IOException e1) {
                 // TODO Auto-generated catch block

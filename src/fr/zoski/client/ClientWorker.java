@@ -15,7 +15,7 @@ public class ClientWorker {
         this.frame = frame;
         this.client = client;
         this.notify();
-        System.out.println("notify");
+        System.out.println("ClientWorker has been notify");
         return true;
     }
 
@@ -29,7 +29,7 @@ public class ClientWorker {
             }
         }
 
-        System.out.println("COUCOUUUUUUUUUUUUUUU   (no wait)");
+        System.out.println("ClientWorker is handling the message");
 
         // Wrapping the byte[] whithin a ByteBuffer
         ByteBuffer bb = ByteBuffer.wrap(rsp);
@@ -58,8 +58,6 @@ public class ClientWorker {
                     System.out.println("Something went wrong");
                 break;
         }
-
-
         this.rsp = null;
     }
 

@@ -51,9 +51,7 @@ public class GameClient implements Runnable {
 
     public static void main(String[] args) {
         try {
-//            GameClient client = new GameClient(InetAddress.getByName("alberola.me"), 8080);
             GameClient client = new GameClient(InetAddress.getByName("localhost"), 8080);
-            //GameClient client = new GameClient(InetAddress.getByName("localhost"), 8080);
             Thread t = new Thread(client);
             t.setDaemon(true);
             t.start();
@@ -65,41 +63,37 @@ public class GameClient implements Runnable {
             gameFrame.setKeyBindings(client);
 
             client.send(hello(), handler);
-            System.out.println("post-hello");
             handler.waitForResponse();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    //method start with id=0 (short) and the int is for the size of the grid
+    //method start with id=0 (short), the idClient and the int is for the size of the grid
     static public byte[] start(int gridSize) {
         ByteBuffer buffer = ByteBuffer.allocate(2 + 4 + 4);
         buffer.putShort(((short) 0));
-//        System.out.println(buffer.toString());
         buffer.putInt(idClient);
         buffer.putInt(gridSize);
-//        System.out.println(buffer.toString());
         return buffer.array();
     }
 
+    //method move id=1 (short) then idClient and direction
     static public byte[] move(short direction) {
         ByteBuffer buffer = ByteBuffer.allocate(2 + 4 + 2);
         buffer.putShort(((short) 1));
-//        System.out.println(buffer.toString());
         buffer.putInt(idClient);
         buffer.putShort(direction);
-//        System.out.println(buffer.toString());
         return buffer.array();
     }
 
+    //method hello id=9, sends just this id to get the idClient
     static public byte[] hello() {
         ByteBuffer buffer = ByteBuffer.allocate(2);
         buffer.putShort((short) 9);
         System.out.println(buffer.toString());
         return buffer.array();
     }
-
 
     public void send(byte[] data, ClientWorker handler) throws IOException {
         // Start a new connection
@@ -155,7 +149,6 @@ public class GameClient implements Runnable {
                     if (!key.isValid()) {
                         continue;
                     }
-
                     // Check what event is available and deal with it
                     if (key.isConnectable()) {
                         this.finishConnection(key);

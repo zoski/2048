@@ -102,11 +102,6 @@ public class Game2048GraphModel {
         return currentCell;
     }
 
-//    public void setGrid(Cell[][] cells){
-//        this.grid = cells;
-//    }
-
-
     public Dimension getPreferredSize() {
         int width = grid_width * Cell.getCellWidth() +
                 FRAME_THICKNESS * 5;

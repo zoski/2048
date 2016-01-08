@@ -30,8 +30,6 @@ public class Game2048Frame {
 
     public Game2048Frame(Game2048GraphModel model) {
         this.model = model;
-//        this.highScoreProperties = new HighScoreProperties(model);
-//        this.highScoreProperties.loadProperties();
         createPartControl();
     }
 
@@ -49,8 +47,6 @@ public class Game2048Frame {
                 exitProcedure();
             }
         });
-
-        //setKeyBindings();
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new FlowLayout());
@@ -107,10 +103,6 @@ public class Game2048Frame {
         gridPanel.repaint();
     }
 
-    public void updateScorePanel() {
-        scorePanel.updatePartControl();
-    }
-
     public ControlPanel getControlPanel() {
         // TODO Auto-generated method stub
         return controlPanel;
@@ -125,7 +117,6 @@ public class Game2048Frame {
                 i++;
             }
         }
-        //refresh view
         this.repaintGridPanel();
     }
 

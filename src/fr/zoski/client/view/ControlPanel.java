@@ -26,15 +26,13 @@ public class ControlPanel {
     }
 
     private void createPartControl() {
-//        StartGameAction listener = new StartGameAction(frame, model);
 
         panel = new JPanel();
         panel.setLayout(new GridBagLayout());
 
         int gridy = 0;
 
-        startGameButton = startGameButton = new JButton("Start Game");
-//        startGameButton.addActionListener(listener);
+        startGameButton = new JButton("Start Game");
         addComponent(panel, startGameButton, 0, gridy++, 1, 1,
                 regularInsets, GridBagConstraints.LINE_START,
                 GridBagConstraints.HORIZONTAL);

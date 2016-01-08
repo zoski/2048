@@ -29,7 +29,6 @@ public class RightArrowAction extends AbstractAction {
             try {
                 client.send(client.move(RIGHT), client.getHandler());
                 client.getHandler().waitForResponse();
-                //repaint?
                 System.out.println("right");
             } catch (IOException e1) {
                 // TODO Auto-generated catch block
