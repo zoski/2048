@@ -4,7 +4,7 @@ import fr.zoski.client.view.Game2048Frame;
 
 import java.nio.ByteBuffer;
 
-public class RspHandler {
+public class ClientWorker {
     private static final boolean DEBUG = true;
     private byte[] rsp = null;
     private Game2048Frame frame = null;

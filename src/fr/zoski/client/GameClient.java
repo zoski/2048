@@ -25,7 +25,7 @@ public class GameClient implements Runnable {
     private static Game2048GraphModel gameGraphModel;
     private static Game2048Frame gameFrame;
     //Handles sending/receiving data from the server
-    private static RspHandler handler;
+    private static ClientWorker handler;
     //ID client:
     private static int idClient;
     private GridPanel gameGridPanel;
@@ -40,7 +40,7 @@ public class GameClient implements Runnable {
     private List pendingChanges = new LinkedList();
     // Maps a SocketChannel to a list of ByteBuffer instances
     private Map pendingData = new HashMap();
-    // Maps a SocketChannel to a RspHandler
+    // Maps a SocketChannel to a ClientWorker
     private Map rspHandlers = Collections.synchronizedMap(new HashMap());
 
     public GameClient(InetAddress hostAddress, int port) throws IOException {
@@ -57,7 +57,7 @@ public class GameClient implements Runnable {
             Thread t = new Thread(client);
             t.setDaemon(true);
             t.start();
-            handler = new RspHandler();
+            handler = new ClientWorker();
             gameGraphModel = new Game2048GraphModel(gridSize);
             gameFrame = new Game2048Frame(gameGraphModel);
             StartGameAction listener = new StartGameAction(gameGraphModel, client, handler);
@@ -101,7 +101,7 @@ public class GameClient implements Runnable {
     }
 
 
-    public void send(byte[] data, RspHandler handler) throws IOException {
+    public void send(byte[] data, ClientWorker handler) throws IOException {
         // Start a new connection
         SocketChannel socketChannel = this.initiateConnection();
 
@@ -209,7 +209,7 @@ public class GameClient implements Runnable {
         byte[] dataCopy = new byte[numRead];
         System.arraycopy(data, 0, dataCopy, 0, numRead);
         // Look up the handler for this channel
-        RspHandler handler = (RspHandler) this.rspHandlers.get(socketChannel);
+        ClientWorker handler = (ClientWorker) this.rspHandlers.get(socketChannel);
         //The handler handles the response
         handler.handleResponse(dataCopy, gameFrame, this);
     }
@@ -293,7 +293,7 @@ public class GameClient implements Runnable {
         gridSize = size;
     }
 
-    public RspHandler getHandler() {
+    public ClientWorker getHandler() {
         return handler;
     }
 

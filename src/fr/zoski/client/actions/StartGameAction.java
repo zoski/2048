@@ -1,7 +1,7 @@
 package fr.zoski.client.actions;
 
+import fr.zoski.client.ClientWorker;
 import fr.zoski.client.GameClient;
-import fr.zoski.client.RspHandler;
 import fr.zoski.client.view.Game2048GraphModel;
 
 import java.awt.event.ActionEvent;
@@ -15,9 +15,9 @@ public class StartGameAction implements ActionListener {
 
     private Game2048GraphModel model;
     private GameClient client;
-    private RspHandler handler;
+    private ClientWorker handler;
 
-    public StartGameAction(Game2048GraphModel model, GameClient client, RspHandler handler) {
+    public StartGameAction(Game2048GraphModel model, GameClient client, ClientWorker handler) {
         this.model = model;
         this.client = client;
         this.handler = handler;

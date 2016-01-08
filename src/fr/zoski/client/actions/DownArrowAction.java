@@ -2,7 +2,7 @@ package fr.zoski.client.actions;
 
 
 import fr.zoski.client.GameClient;
-import fr.zoski.client.RspHandler;
+import fr.zoski.client.ClientWorker;
 import fr.zoski.client.view.Game2048Frame;
 import fr.zoski.client.view.Game2048GraphModel;
 
@@ -16,7 +16,7 @@ import java.io.IOException;
 public class DownArrowAction extends AbstractAction {
 
     private static short DOWN = 2;
-    private static RspHandler handler;
+    private static ClientWorker handler;
     private static GameClient client;
     private Game2048GraphModel model;
     private Game2048Frame frame;
