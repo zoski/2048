@@ -1,7 +1,7 @@
 package fr.zoski.server;
 
 
-import fr.zoski.shared.model.Game2048Model;
+import fr.zoski.server.model.Game2048Model;
 import fr.zoski.server.action.*;
 import fr.zoski.server.model.ServerDataEvent;
 
@@ -51,7 +51,7 @@ public class GameWorker implements Runnable {
 
                 games.put(clientId, currentGame);
 
-                StartGameAction start = new StartGameAction(currentGame);
+                StartGame start = new StartGame(currentGame);
                 start.actionPerformed();
 
                 break;
@@ -73,7 +73,7 @@ public class GameWorker implements Runnable {
                     case 1: // TOP
                         if (DEBUG)
                             System.out.println("Direction interpreted : TOP");
-                        UpArrowAction up = new UpArrowAction(currentGame);
+                        UpArrow up = new UpArrow(currentGame);
                         up.actionPerformed();
 
                         if (DEBUG)
@@ -83,21 +83,21 @@ public class GameWorker implements Runnable {
                     case 2: // DOWN
                         if (DEBUG)
                             System.out.println("Direction interpreted : DOWN");
-                        DownArrowAction down = new DownArrowAction(currentGame);
+                        DownArrow down = new DownArrow(currentGame);
                         down.actionPerformed();
                         break;
 
                     case 3: // LEFT
                         if (DEBUG)
                             System.out.println("Direction interpreted : LEFT");
-                        LeftArrowAction left = new LeftArrowAction(currentGame);
+                        LeftArrow left = new LeftArrow(currentGame);
                         left.actionPerformed();
                         break;
 
                     case 4: // RIGHT
                         if (DEBUG)
                             System.out.println("Direction interpreted : RIGHT");
-                        RightArrowAction right = new RightArrowAction(currentGame);
+                        RightArrow right = new RightArrow(currentGame);
                         right.actionPerformed();
                         break;
 

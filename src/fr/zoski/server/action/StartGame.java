@@ -1,15 +1,15 @@
 package fr.zoski.server.action;
 
-import fr.zoski.shared.model.Game2048Model;
+import fr.zoski.server.model.Game2048Model;
 
 /**
  * Created by gael on 30/12/15.
  */
-public class StartGameAction {
+public class StartGame {
 
     private Game2048Model model;
 
-    public StartGameAction(Game2048Model model) {
+    public StartGame(Game2048Model model) {
         this.model = model;
     }
 

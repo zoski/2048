@@ -1,21 +1,21 @@
 package fr.zoski.server.action;
 
-import fr.zoski.shared.model.Game2048Model;
+import fr.zoski.server.model.Game2048Model;
 
 /**
  * Created by gael on 30/12/15.
  */
-public class RightArrowAction {
+public class LeftArrow {
 
     private Game2048Model model;
 
-    public RightArrowAction(Game2048Model model) {
+    public LeftArrow(Game2048Model model) {
         this.model = model;
     }
 
     public void actionPerformed() {
         if (model.isArrowActive()) {
-            if (model.moveCellsRight()) {
+            if (model.moveCellsLeft()) {
                 if (model.isGameOver()) {
                     model.setArrowActive(false);
                 } else {

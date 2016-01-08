@@ -1,4 +1,6 @@
-package fr.zoski.shared.model;
+package fr.zoski.server.model;
+
+import fr.zoski.shared.Cell;
 
 import java.awt.*;
 import java.nio.ByteBuffer;

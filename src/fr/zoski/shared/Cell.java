@@ -1,4 +1,4 @@
-package fr.zoski.shared.model;
+package fr.zoski.shared;
 
 import java.awt.*;
 import java.awt.font.FontRenderContext;
